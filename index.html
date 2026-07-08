@@ -221,7 +221,6 @@
     </div>
 </div>
 
-<script>
     var listData = [];
     var currentFilter = "ALL";
 
@@ -230,68 +229,117 @@
         var days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
         var months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
         document.getElementById("date-text").innerHTML = "INDEX: " + days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+        
+        // โหลดข้อมูลจาก storage
+        var cache = localStorage.getItem("mil_log_data_v5");
+        if(cache) {
+            listData = JSON.parse(cache);
+        }
+        
         resetTimeToCurrent();
-        try {
-            var cache = localStorage.getItem("mil_log_data_v5");
-            if(cache) { listData = JSON.parse(cache); refreshTable(); }
-        } catch(e) {}
+        refreshTable();
     };
 
-    function setPreset(text, cat) { document.getElementById("tx-desc").value = text; document.getElementById("tx-type").value = cat; }
-    function resetTimeToCurrent() {
-        var d = new Date(); var hr = d.getHours(); var min = d.getMinutes();
-        if(hr < 10) hr = "0" + hr; if(min < 10) min = "0" + min;
-        document.getElementById("tx-time").value = hr + ":" + min;
+    function setPreset(text, cat) { 
+        document.getElementById("tx-desc").value = text; 
+        document.getElementById("tx-type").value = cat; 
     }
+
+    function resetTimeToCurrent() {
+        var d = new Date(); 
+        var hr = d.getHours(); 
+        var min = d.getMinutes();
+        document.getElementById("tx-time").value = (hr < 10 ? "0" + hr : hr) + ":" + (min < 10 ? "0" + min : min);
+    }
+
     function modifyTime(mins) {
         var timeInput = document.getElementById("tx-time").value;
         var parts = timeInput.split(":");
-        var hh = parseInt(parts[0], 10); var mm = parseInt(parts[1], 10);
-        if (isNaN(hh) || isNaN(mm)) return;
-        var totalMins = (hh * 60) + mm + mins;
-        if (totalMins < 0) totalMins += 1440; 
-        totalMins = totalMins % 1440;
-        var newH = Math.floor(totalMins / 60); var newM = totalMins % 60;
-        if (newH < 10) newH = "0" + newH; if (newM < 10) newM = "0" + newM;
-        document.getElementById("tx-time").value = newH + ":" + newM;
+        var totalMins = (parseInt(parts[0], 10) * 60) + parseInt(parts[1], 10) + mins;
+        
+        // คำนวณเวลาใหม่แบบวนลูป 24 ชม.
+        totalMins = (totalMins + 1440) % 1440;
+        var newH = Math.floor(totalMins / 60); 
+        var newM = totalMins % 60;
+
+        document.getElementById("tx-time").value = (newH < 10 ? "0" + newH : newH) + ":" + (newM < 10 ? "0" + newM : newM);
     }
+
     function addData() {
-        var t = document.getElementById("tx-time").value; var type = document.getElementById("tx-type").value; var desc = document.getElementById("tx-desc").value;
-        if(t == "" || desc == "") { alert("CRITICAL ERROR: DATA INPUT INCOMPLETE!"); return; }
+        var t = document.getElementById("tx-time").value; 
+        var type = document.getElementById("tx-type").value; 
+        var desc = document.getElementById("tx-desc").value;
+
+        if(desc.trim() == "") { alert("CRITICAL ERROR: DATA INPUT INCOMPLETE!"); return; }
+
         listData.push({time: t, type: type, desc: desc.toUpperCase()});
+        
+        // เรียงลำดับตามเวลา
         listData.sort(function(a, b) { return a.time.localeCompare(b.time); });
-        saveToStorage(); document.getElementById("tx-desc").value = ""; resetTimeToCurrent(); refreshTable();
-    }
-    function deleteData(index) { if(confirm("TERMINATE THIS LOG ENTRY FROM CORE DATA?")) { listData.splice(index, 1); saveToStorage(); refreshTable(); } }
-    function setFilter(filterType) {
-        currentFilter = filterType;
-        document.getElementById("f-all").style.background = (filterType === "ALL") ? "#00FF33" : "#001100";
-        document.getElementById("f-all").style.color = (filterType === "ALL") ? "#000" : "#00FF33";
-        document.getElementById("f-food").style.background = (filterType === "FOOD") ? "#00FF33" : "#001100";
-        document.getElementById("f-food").style.color = (filterType === "FOOD") ? "#000" : "#00FF33";
-        document.getElementById("f-drink").style.background = (filterType === "DRINK") ? "#00FF33" : "#001100";
-        document.getElementById("f-drink").style.color = (filterType === "DRINK") ? "#000" : "#00FF33";
+        
+        saveToStorage(); 
+        document.getElementById("tx-desc").value = ""; 
         refreshTable();
     }
-    function nuclearReset() { if(confirm("⚠️ ALERT: CONFIRM COMPLETE OVERWRITE AND WIPE OF SYSTEM DATALOG?")) { listData = []; saveToStorage(); refreshTable(); document.getElementById("export-output").style.display = "none"; } }
+
+    function deleteData(index) { 
+        if(confirm("TERMINATE THIS LOG ENTRY FROM CORE DATA?")) { 
+            listData.splice(index, 1); 
+            saveToStorage(); 
+            refreshTable(); 
+        } 
+    }
+
+    function setFilter(filterType) {
+        currentFilter = filterType;
+        // ปรับสีปุ่ม Filter
+        ["ALL", "FOOD", "DRINK"].forEach(f => {
+            var btn = document.getElementById("f-" + f.toLowerCase());
+            if (btn) {
+                btn.style.background = (filterType === f) ? "#00FF33" : "#001100";
+                btn.style.color = (filterType === f) ? "#000" : "#00FF33";
+            }
+        });
+        refreshTable();
+    }
+
+    function nuclearReset() { 
+        if(confirm("⚠️ ALERT: CONFIRM COMPLETE OVERWRITE AND WIPE OF SYSTEM DATALOG?")) { 
+            listData = []; 
+            localStorage.removeItem("mil_log_data_v5");
+            refreshTable(); 
+        } 
+    }
+
     function toggleExport() {
         var area = document.getElementById("export-output");
         if(area.style.display === "block") { area.style.display = "none"; } 
         else {
-            var textResult = "";
-            for(var i=0; i<listData.length; i++) { textResult += "[" + listData[i].time + "] " + listData[i].type + " >> " + listData[i].desc + "\n"; }
-            area.value = textResult ? textResult : "SYSTEM STORAGE IS EMPTY.";
+            area.value = listData.map(item => `[${item.time}] ${item.type} >> ${item.desc}`).join("\n") || "SYSTEM STORAGE IS EMPTY.";
             area.style.display = "block";
         }
     }
-    function saveToStorage() { try { localStorage.setItem("mil_log_data_v5", JSON.stringify(listData)); } catch(e) {} }
+
+    function saveToStorage() { localStorage.setItem("mil_log_data_v5", JSON.stringify(listData)); }
+
     function refreshTable() {
-        var html = ""; var foodCount = 0; var drinkCount = 0;
-        for(var i = 0; i < listData.length; i++) {
-            if(listData[i].type === "FOOD") foodCount++; if(listData[i].type === "DRINK") drinkCount++;
-            if(currentFilter !== "ALL" && listData[i].type !== currentFilter) continue;
-            html += "<tr><td style='text-align:center; font-weight:bold; color:#00FF33;'>" + listData[i].time + "</td><td style='text-align:center; font-weight:bold; color:#00AA22;'>" + listData[i].type + "</td><td style='color:#00FF33;'>" + listData[i].desc + "</td><td style='text-align:center;'><button class='btn-del' onclick='deleteData(" + i + ")'>X</button></td></tr>";
-        }
-        document.getElementById("log-table-body").innerHTML = html;
-        document.getElementById("summary-text").innerHTML = "COUNTER // FOOD_UNIT: [" + foodCount + "] | DRINK_UNIT: [" + drinkCount + "]";
+        var tbody = document.getElementById("log-table-body");
+        tbody.innerHTML = "";
+        var foodCount = 0, drinkCount = 0;
+
+        listData.forEach((item, i) => {
+            if(item.type === "FOOD") foodCount++; 
+            if(item.type === "DRINK") drinkCount++;
+
+            if(currentFilter === "ALL" || item.type === currentFilter) {
+                var row = `<tr>
+                    <td style='text-align:center; font-weight:bold; color:#00FF33;'>${item.time}</td>
+                    <td style='text-align:center; font-weight:bold; color:#00AA22;'>${item.type}</td>
+                    <td style='color:#00FF33;'>${item.desc}</td>
+                    <td style='text-align:center;'><button class='btn-del' onclick='deleteData(${i})'>X</button></td>
+                </tr>`;
+                tbody.innerHTML += row;
+            }
+        });
+        document.getElementById("summary-text").innerHTML = `COUNTER // FOOD_UNIT: [${foodCount}] | DRINK_UNIT: [${drinkCount}]`;
     }
