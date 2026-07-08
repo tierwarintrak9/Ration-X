@@ -62,7 +62,6 @@
             box-sizing: border-box; 
         }
         
-        /* ปุ่มคีย์ลัดสำหรับ iPad */
         .preset-container {
             margin-top: 5px;
             margin-bottom: 10px;
@@ -101,7 +100,6 @@
             color: #FFFFFF;
         }
         
-        /* ตารางและส่วนสรุปยอด */
         .summary-box {
             background-color: #051505;
             border: 1px solid #9D00FF;
@@ -147,12 +145,12 @@
 <body>
     <div class="box">
         <div class="status-bar">
-            <span style="float:left;">SYS_VER: 2.0_ES5</span>
+            <span style="float:left;">LIGHT YEAR MOTOREX_BIONIC 2.0</span>
             <span style="float:right; color:#00FF00;">[STATUS: SECURE]</span>
             <div style="clear:both;"></div>
         </div>
 
-        <h1>TACTICAL LOG</h1>
+        <h1>TACTICAL RATION LOG</h1>
         <div id="date-text" class="date">LOADING...</div>
         
         <div class="field">
@@ -219,7 +217,6 @@
             } catch(e) {}
         };
 
-        // ฟังก์ชันช่วยใส่ค่าด่วน
         function setPreset(text, cat) {
             document.getElementById("tx-desc").value = text;
             document.getElementById("tx-type").value = cat;
@@ -256,11 +253,10 @@
 
             saveToStorage();
             document.getElementById("tx-desc").value = "";
-            resetTimeToCurrent(); // อัปเดตเวลารอบถัดไปให้เป็นปัจจุบันเสมอ
+            resetTimeToCurrent();
             refreshTable();
         }
 
-        // ฟังก์ชันลบข้อมูลรายแถว
         function deleteData(index) {
             if(confirm("CONFIRM DELETION OF THIS ENTRY?")) {
                 listData.splice(index, 1);
@@ -281,11 +277,9 @@
             var drinkCount = 0;
 
             for(var i = 0; i < listData.length; i++) {
-                // นับยอดสรุป
                 if(listData[i].type === "FOOD") foodCount++;
                 if(listData[i].type === "DRINK") drinkCount++;
 
-                // วาดแถวตารางพร้อมปุ่มลบรายตัว
                 html += "<tr>";
                 html += "<td style='text-align:center; font-weight:bold;'>" + listData[i].time + "</td>";
                 html += "<td style='text-align:center; font-weight:bold;'>" + listData[i].type + "</td>";
@@ -295,8 +289,6 @@
             }
             
             document.getElementById("log-table-body").innerHTML = html;
-            
-            // อัปเดตตัวเลขสรุปผลยอดกินดื่ม
             document.getElementById("summary-text").innerHTML = "TOTAL RATIONS: FOOD [" + foodCount + "] | DRINK [" + drinkCount + "]";
         }
     </script>
