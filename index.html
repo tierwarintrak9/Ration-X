@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TACTICAL LOG V2</title>
+    <title>TACTICAL LOG V3</title>
     <style>
         body { 
             background-color: #2F4F4F; 
@@ -51,6 +51,22 @@
             margin-bottom: 4px; 
             font-weight: bold; 
         }
+        
+        .time-row {
+            display: table;
+            width: 100%;
+        }
+        .time-cell-input {
+            display: table-cell;
+            width: 40%;
+        }
+        .time-cell-btns {
+            display: table-cell;
+            width: 60%;
+            text-align: right;
+            vertical-align: middle;
+        }
+        
         input, select { 
             width: 100%; 
             padding: 10px; 
@@ -68,13 +84,13 @@
         }
         .btn-preset {
             display: inline-block;
-            padding: 5px 8px;
+            padding: 6px 10px;
             background-color: #112211;
             color: #9D00FF;
             border: 1px solid #9D00FF;
             font-size: 12px;
             font-weight: bold;
-            margin-right: 5px;
+            margin-right: 4px;
             margin-bottom: 5px;
             cursor: pointer;
         }
@@ -110,10 +126,17 @@
             font-weight: bold;
             text-align: center;
         }
+
+        .filter-container {
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
         table { 
             width: 100%; 
             border-collapse: collapse; 
-            margin-top: 10px; 
+            margin-top: 5px; 
         }
         th, td { 
             border: 1px solid #9D00FF; 
@@ -126,6 +149,7 @@
             color: #FFFFFF; 
             text-align: center; 
         }
+        
         .btn-del {
             background-color: #330000;
             color: #FF3333;
@@ -134,18 +158,61 @@
             font-weight: bold;
             padding: 2px 6px;
             cursor: pointer;
-            font-size: 12px;
         }
-        .btn-del:active {
-            background-color: #FF3333;
-            color: #FFFFFF;
+        
+        .control-zone {
+            margin-top: 20px;
+            border-top: 1px dashed #9D00FF;
+            padding-top: 15px;
+        }
+        .btn-danger {
+            background-color: #441111;
+            color: #FF3333;
+            border: 1px solid #FF3333;
+            padding: 10px;
+            font-family: "Courier New", monospace;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            width: 48%;
+            float: left;
+        }
+        .btn-danger:active { background-color: #FF3333; color: #000000; }
+        
+        .btn-utility {
+            background-color: #112233;
+            color: #3399FF;
+            border: 1px solid #3399FF;
+            padding: 10px;
+            font-family: "Courier New", monospace;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            width: 48%;
+            float: right;
+        }
+        .btn-utility:active { background-color: #3399FF; color: #000000; }
+
+        .export-area {
+            width: 100%;
+            height: 80px;
+            background-color: #000000;
+            color: #00FF00;
+            border: 1px dashed #00FF00;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            margin-top: 10px;
+            padding: 5px;
+            box-sizing: border-box;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="box">
+        <!-- อัปเดตชื่อระบบตรงนี้แล้วครับ -->
         <div class="status-bar">
-            <span style="float:left;">LIGHTYEARX-MOTOREX_BIONIC 2.0</span>
+            <span style="float:left;">LIGHTYEARX-MOTOREX</span>
             <span style="float:right; color:#00FF00;">[STATUS: SECURE]</span>
             <div style="clear:both;"></div>
         </div>
@@ -155,8 +222,19 @@
         
         <div class="field">
             <label>TIME (HH:MM):</label>
-            <input type="text" id="tx-time" value="00:00">
+            <div class="time-row">
+                <div class="time-cell-input">
+                    <input type="text" id="tx-time" value="00:00">
+                </div>
+                <div class="time-cell-btns">
+                    <div class="btn-preset" onclick="modifyTime(-10)">-10M</div>
+                    <div class="btn-preset" onclick="modifyTime(-5)">-5M</div>
+                    <div class="btn-preset" onclick="modifyTime(5)">+5M</div>
+                    <div class="btn-preset" onclick="modifyTime(10)">+10M</div>
+                </div>
+            </div>
         </div>
+        
         <div class="field">
             <label>CATEGORY:</label>
             <select id="tx-type">
@@ -164,6 +242,7 @@
                 <option value="DRINK">DRINK</option>
             </select>
         </div>
+        
         <div class="field">
             <label>DESCRIPTION:</label>
             <input type="text" id="tx-desc" placeholder="ENTER RATION">
@@ -182,6 +261,13 @@
             TOTAL RATIONS: FOOD [0] | DRINK [0]
         </div>
 
+        <div class="filter-container">
+            <span style="font-size:12px; font-weight:bold; margin-right:5px;">FILTER:</span>
+            <div class="btn-preset" id="f-all" onclick="setFilter('ALL')" style="color:#FFF; background:#9D00FF;">ALL</div>
+            <div class="btn-preset" id="f-food" onclick="setFilter('FOOD')">FOOD</div>
+            <div class="btn-preset" id="f-drink" onclick="setFilter('DRINK')">DRINK</div>
+        </div>
+
         <h2>DAILY LOGS</h2>
         <table>
             <thead>
@@ -193,12 +279,21 @@
                 </tr>
             </thead>
             <tbody id="log-table-body">
-                </tbody>
+                <!-- ข้อมูลแสดงตรงนี้ -->
+            </tbody>
         </table>
+
+        <div class="control-zone">
+            <button type="button" class="btn-danger" onclick="nuclearReset()">NUCLEAR RESET</button>
+            <button type="button" class="btn-utility" onclick="toggleExport()">EXPORT DATA</button>
+            <div style="clear:both;"></div>
+            <textarea id="export-output" class="export-area" readonly></textarea>
+        </div>
     </div>
 
     <script>
         var listData = [];
+        var currentFilter = "ALL";
 
         window.onload = function() {
             var d = new Date();
@@ -209,7 +304,7 @@
             resetTimeToCurrent();
 
             try {
-                var cache = localStorage.getItem("mil_log_data_v2");
+                var cache = localStorage.getItem("mil_log_data_v3");
                 if(cache) {
                     listData = JSON.parse(cache);
                     refreshTable();
@@ -229,6 +324,27 @@
             if(hr < 10) hr = "0" + hr;
             if(min < 10) min = "0" + min;
             document.getElementById("tx-time").value = hr + ":" + min;
+        }
+
+        function modifyTime(mins) {
+            var timeInput = document.getElementById("tx-time").value;
+            var parts = timeInput.split(":");
+            var hh = parseInt(parts[0], 10);
+            var mm = parseInt(parts[1], 10);
+            
+            if (isNaN(hh) || isNaN(mm)) return;
+
+            var totalMins = (hh * 60) + mm + mins;
+            if (totalMins < 0) totalMins += 1440; 
+            totalMins = totalMins % 1440;
+
+            var newH = Math.floor(totalMins / 60);
+            var newM = totalMins % 60;
+
+            if (newH < 10) newH = "0" + newH;
+            if (newM < 10) newM = "0" + newM;
+
+            document.getElementById("tx-time").value = newH + ":" + newM;
         }
 
         function addData() {
@@ -265,9 +381,47 @@
             }
         }
 
+        function setFilter(filterType) {
+            currentFilter = filterType;
+            
+            document.getElementById("f-all").style.background = (filterType === "ALL") ? "#9D00FF" : "#112211";
+            document.getElementById("f-all").style.color = (filterType === "ALL") ? "#FFF" : "#9D00FF";
+            
+            document.getElementById("f-food").style.background = (filterType === "FOOD") ? "#9D00FF" : "#112211";
+            document.getElementById("f-food").style.color = (filterType === "FOOD") ? "#FFF" : "#9D00FF";
+            
+            document.getElementById("f-drink").style.background = (filterType === "DRINK") ? "#9D00FF" : "#112211";
+            document.getElementById("f-drink").style.color = (filterType === "DRINK") ? "#FFF" : "#9D00FF";
+
+            refreshTable();
+        }
+
+        function nuclearReset() {
+            if(confirm("CRITICAL WARNING: WIPE ALL DAILY LOG DATA?")) {
+                listData = [];
+                saveToStorage();
+                refreshTable();
+                document.getElementById("export-output").style.display = "none";
+            }
+        }
+
+        function toggleExport() {
+            var area = document.getElementById("export-output");
+            if(area.style.display === "block") {
+                area.style.display = "none";
+            } else {
+                var textResult = "";
+                for(var i=0; i<listData.length; i++) {
+                    textResult += "[" + listData[i].time + "] " + listData[i].type + ": " + listData[i].desc + "\n";
+                }
+                area.value = textResult ? textResult : "NO DATA AVAILABLE.";
+                area.style.display = "block";
+            }
+        }
+
         function saveToStorage() {
             try {
-                localStorage.setItem("mil_log_data_v2", JSON.stringify(listData));
+                localStorage.setItem("mil_log_data_v3", JSON.stringify(listData));
             } catch(e) {}
         }
 
@@ -279,6 +433,10 @@
             for(var i = 0; i < listData.length; i++) {
                 if(listData[i].type === "FOOD") foodCount++;
                 if(listData[i].type === "DRINK") drinkCount++;
+
+                if(currentFilter !== "ALL" && listData[i].type !== currentFilter) {
+                    continue; 
+                }
 
                 html += "<tr>";
                 html += "<td style='text-align:center; font-weight:bold;'>" + listData[i].time + "</td>";
