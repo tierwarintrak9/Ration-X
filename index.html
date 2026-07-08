@@ -3,97 +3,81 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LIGHTYEARX-MOTOREX V5.1</title>
+    <title>LIGHTYEARX-MOTOREX V6</title>
     <style>
         body { 
-            background-color: #000500; 
+            background-color: #000000; 
             color: #00FF33; 
             font-family: "Courier New", monospace; 
-            text-transform: uppercase; 
-            padding: 5px; /* ลด padding เพื่อให้กว้างขึ้น */
-            margin: 0;
-            background-image: linear-gradient(rgba(0, 50, 0, 0.1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 50, 0, 0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
+            margin: 0; padding: 10px;
         }
 
         .box { 
-            width: 100%; /* ปรับให้เต็มจอ */
-            max-width: 100%;
-            margin: 0 auto; 
-            background-color: rgba(0, 8, 0, 0.95); 
-            padding: 10px; 
+            width: 100%; 
+            background-color: #000000; 
             border: 2px solid #00FF33; 
+            padding: 15px; 
             box-sizing: border-box;
-            position: relative;
         }
 
-        h1, h2 { text-align: center; color: #00FF33; margin: 5px 0; border-bottom: 2px dashed #00FF33; padding-bottom: 3px; font-size: 18px; }
-
-        .status-bar {
-            width: 100%;
-            font-size: 10px;
-            color: #00AA22;
-            border-bottom: 1px solid #00FF33;
-            padding-bottom: 4px;
-            margin-bottom: 8px;
-        }
+        /* ขยายขนาดฟอนต์ให้ใหญ่ขึ้น */
+        h1 { font-size: 24px; text-align: center; margin-bottom: 20px; }
+        h2 { font-size: 20px; text-align: center; margin-top: 30px; }
         
-        /* เอฟเฟกต์เรืองแสงสถานะ */
-        .status-right {
-            float: right;
-            color: #00FF33;
-            font-weight: bold;
-            text-shadow: 0 0 8px #00FF33;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .server-line {
-            font-size: 10px;
-            color: #00FF33;
-            margin-top: 2px;
-            padding-bottom: 5px;
-            border-bottom: 1px dashed #004400;
+        .status-bar { font-size: 14px; border-bottom: 1px solid #00FF33; padding-bottom: 10px; margin-bottom: 15px; }
+        
+        .field { margin-bottom: 25px; }
+        label { display: block; font-size: 16px; margin-bottom: 10px; color: #00AA22; }
+        
+        /* Input & Select */
+        input, select { 
+            width: 100%; 
+            padding: 15px; 
+            background: #000; 
+            color: #00FF33; 
+            border: 2px solid #00FF33; 
+            font-size: 18px; 
+            font-family: inherit;
+            box-sizing: border-box;
+            /* เอาแถบสีเทาออก */
+            -webkit-appearance: none; 
+            appearance: none;
         }
 
-        .field { margin-bottom: 10px; border-left: 2px solid #00AA22; padding-left: 5px; }
-        label { display: block; font-size: 10px; color: #00AA22; margin-bottom: 2px; }
+        button.btn-main { 
+            width: 100%; 
+            padding: 20px; 
+            background: #00FF33; 
+            color: #000; 
+            border: none; 
+            font-size: 20px; 
+            font-weight: bold; 
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+        th { font-size: 16px; border: 1px solid #00FF33; padding: 10px; background: #002200; }
+        td { font-size: 16px; border: 1px solid #00FF33; padding: 10px; }
         
-        input, select { width: 100%; padding: 6px; background: #000; color: #00FF33; border: 1px solid #00AA22; font-family: inherit; box-sizing: border-box; }
-        
-        .btn-preset { display: inline-block; padding: 4px 6px; background: #001100; color: #00FF33; border: 1px solid #00AA22; font-size: 10px; cursor: pointer; margin-right: 2px; }
-        
-        button.btn-main { width: 100%; padding: 10px; background: #002200; color: #00FF33; border: 2px solid #00FF33; font-weight: bold; cursor: pointer; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 11px; }
-        th { background: #002200; color: #00FF33; border: 1px solid #00AA22; padding: 4px; }
-        td { border: 1px solid #00AA22; padding: 4px; color: #00FF33; text-align: center; }
-        
-        .btn-del { background: #220000; color: #FF3333; border: 1px solid #FF3333; cursor: pointer; padding: 2px 5px; }
+        .btn-del { background: #550000; color: #FF3333; padding: 10px; border: 1px solid #FF3333; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="box">
         <div class="status-bar">
-            <span style="float:left;">SYS.LOG // LIGHTYEARX-MOTOREX_BIONIC 5.1</span>
-            <span class="status-right">● ONLINE</span>
+            [SYS.SRV] // [+66] THAILAND <span style="float:right; color:#00FF33;">● ONLINE</span>
         </div>
-        <div class="server-line">[SYS.SRV] // [+66] THAILAND</div>
 
         <h1>TACTICAL COMS RATION LOG</h1>
         
         <div class="field">
-            <label>[SYS.TIME] // INPUT CURRENT TIME</label>
-            <input type="text" id="tx-time" value="00:00">
+            <label>[SYS.TIME]</label>
+            <input type="text" id="tx-time" value="02:28">
         </div>
         
         <div class="field">
-            <label>[SYS.CAT] // SELECT DATA CATEGORY</label>
+            <label>[SYS.CAT]</label>
             <select id="tx-type">
                 <option value="FOOD">FOOD (SUPPLY)</option>
                 <option value="DRINK">DRINK (HYDRATION)</option>
@@ -101,8 +85,8 @@
         </div>
         
         <div class="field">
-            <label>[SYS.DESC] // ENTER FIELD DETAILS</label>
-            <input type="text" id="tx-desc" placeholder="AWAITING INPUT...">
+            <label>[SYS.DESC]</label>
+            <input type="text" id="tx-desc" placeholder="ENTER DATA...">
         </div>
         
         <button class="btn-main" onclick="addData()">EXECUTE LOG ENTRY</button>
@@ -115,9 +99,38 @@
     </div>
 
     <script>
-        // โค้ด Logic คงเดิม (เรียกใช้ v5 ได้เลย)
-        // อย่าลืมอัปเดตฟังก์ชัน refreshTable ให้แสดงข้อมูลตารางตามโครงสร้างใหม่นี้ครับ
-        // (สามารถคงฟังก์ชันเดิมจากเวอร์ชันก่อนหน้าได้เลย)
+        // ใช้ Logic เดิมในการบันทึก แต่แก้การแสดงผลใน refreshTable ให้รองรับขนาดฟอนต์ใหม่
+        function addData() {
+            var t = document.getElementById("tx-time").value;
+            var type = document.getElementById("tx-type").value;
+            var desc = document.getElementById("tx-desc").value;
+            
+            var listData = JSON.parse(localStorage.getItem("mil_log_data_v5") || "[]");
+            listData.push({time: t, type: type, desc: desc.toUpperCase()});
+            localStorage.setItem("mil_log_data_v5", JSON.stringify(listData));
+            
+            document.getElementById("tx-desc").value = "";
+            refreshTable();
+        }
+
+        function refreshTable() {
+            var listData = JSON.parse(localStorage.getItem("mil_log_data_v5") || "[]");
+            var html = "";
+            for(var i=0; i<listData.length; i++) {
+                html += "<tr><td>"+listData[i].time+"</td><td>"+listData[i].type+"</td><td>"+listData[i].desc+"</td><td><button class='btn-del' onclick='deleteData("+i+")'>X</button></td></tr>";
+            }
+            document.getElementById("log-table-body").innerHTML = html;
+        }
+
+        function deleteData(index) {
+            var listData = JSON.parse(localStorage.getItem("mil_log_data_v5") || "[]");
+            listData.splice(index, 1);
+            localStorage.setItem("mil_log_data_v5", JSON.stringify(listData));
+            refreshTable();
+        }
+        
+        // โหลดข้อมูลเมื่อเปิดหน้าเว็บ
+        refreshTable();
     </script>
 </body>
 </html>
