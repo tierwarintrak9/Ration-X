@@ -3,40 +3,73 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LIGHTYEARX-MOTOREX V4</title>
+    <title>LIGHTYEARX-MOTOREX V5</title>
     <style>
-        /* HACKER GREEN-BLACK THEME */
+        /* TACTICAL HACKER & MILITARY TERMINAL HUD */
         body { 
-            background-color: #000000; 
-            color: #00FF00; 
+            background-color: #000500; 
+            color: #00FF33; 
             font-family: "Courier New", monospace; 
             text-transform: uppercase; 
-            padding: 15px; 
-            margin: 0; 
+            padding: 10px; 
+            margin: 0;
+            /* เพิ่มลายเส้นตาราง Grid ทหาร */
+            background-image: linear-gradient(rgba(0, 50, 0, 0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 50, 0, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
+        
+        /* เอฟเฟกต์เส้น Scanline หน้าจอ CRT เก่า */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 99999;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
         .box { 
             max-width: 500px; 
             margin: 0 auto; 
-            background-color: #050505; 
+            background-color: rgba(0, 8, 0, 0.9); 
             padding: 15px; 
-            border: 2px solid #00FF00; 
-            border-radius: 4px; 
-            box-shadow: 0 0 10px #005500;
-        }
-        h1, h2 { 
-            text-align: center; 
-            color: #00FF00; 
-            margin: 10px 0; 
-            border-bottom: 2px solid #00FF00; 
-            padding-bottom: 5px; 
+            border: 2px solid #00FF33; 
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 255, 51, 0.2);
         }
         
-        /* บังคับแยกฝั่งแถบสถานะแบบล็อกเปอร์เซ็นต์ ป้องกันบั๊กเบราว์เซอร์เก่า */
+        /* ลูกเล่นมุมกล่องสไตล์หน้าจอเรดาร์/HUD ทหาร */
+        .box::before {
+            content: "[ OPERATIONAL HUD ]";
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: #000500;
+            padding: 0 5px;
+            font-size: 10px;
+            color: #00FF33;
+            letter-spacing: 2px;
+        }
+
+        h1, h2 { 
+            text-align: center; 
+            color: #00FF33; 
+            margin: 10px 0; 
+            border-bottom: 2px dashed #00FF33; 
+            padding-bottom: 5px; 
+            font-size: 20px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(0, 255, 51, 0.5);
+        }
+        
         .status-bar {
             width: 100%;
             font-size: 11px;
-            color: #00AA00;
-            border-bottom: 1px dashed #00FF00;
+            color: #00AA22;
+            border-bottom: 1px solid #00FF33;
             padding-bottom: 6px;
             margin-bottom: 12px;
         }
@@ -50,26 +83,35 @@
             float: right;
             width: 30%;
             text-align: right;
-            color: #00FF00;
+            color: #00FF33;
             font-weight: bold;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1.0; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1.0; }
         }
         
         .date { 
             text-align: center; 
-            color: #00FF00; 
+            color: #00FF33; 
             font-weight: bold; 
             margin-bottom: 15px; 
-            font-size: 18px;
-            text-shadow: 0 0 5px #005500;
+            font-size: 16px;
         }
         .field { 
-            margin-bottom: 12px; 
+            margin-bottom: 14px; 
+            border-left: 3px solid #00AA22;
+            padding-left: 8px;
         }
         label { 
             display: block; 
             margin-bottom: 4px; 
             font-weight: bold; 
-            color: #00AA00;
+            color: #00AA22;
+            font-size: 12px;
         }
         
         .time-row {
@@ -78,81 +120,85 @@
         }
         .time-cell-input {
             display: table-cell;
-            width: 40%;
+            width: 35%;
         }
         .time-cell-btns {
             display: table-cell;
-            width: 60%;
+            width: 65%;
             text-align: right;
             vertical-align: middle;
         }
         
         input, select { 
             width: 100%; 
-            padding: 10px; 
+            padding: 8px; 
             background-color: #000000; 
-            color: #00FF00; 
-            border: 1px solid #00FF00; 
+            color: #00FF33; 
+            border: 1px solid #00AA22; 
             font-family: "Courier New", monospace; 
             font-size: 16px; 
             box-sizing: border-box; 
         }
+        input:focus, select:focus {
+            border-color: #00FF33;
+            outline: none;
+        }
         
-        /* ปุ่มคีย์ลัดสไตล์เทอร์มินอล */
         .preset-container {
             margin-top: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         .btn-preset {
             display: inline-block;
-            padding: 6px 10px;
+            padding: 5px 8px;
             background-color: #001100;
-            color: #00FF00;
-            border: 1px solid #00FF00;
-            font-size: 12px;
+            color: #00FF33;
+            border: 1px solid #00AA22;
+            font-size: 11px;
             font-weight: bold;
-            margin-right: 4px;
+            margin-right: 3px;
             margin-bottom: 5px;
             cursor: pointer;
         }
         .btn-preset:active {
-            background-color: #00FF00;
+            background-color: #00FF33;
             color: #000000;
         }
 
-        /* ปุ่มหลักแฮ็กเกอร์เขียวเข้ม */
+        /* ปุ่มคีย์ข้อมูลแบบแท่งควบคุมเหล็กไททาเนียม */
         button.btn-main { 
             width: 100%; 
-            padding: 14px; 
-            background-color: #003300; 
-            color: #00FF00; 
-            border: 2px solid #00FF00; 
+            padding: 12px; 
+            background-color: #002200; 
+            color: #00FF33; 
+            border: 2px solid #00FF33; 
             font-family: "Courier New", monospace; 
-            font-size: 18px; 
+            font-size: 16px; 
             font-weight: bold; 
             margin-top: 5px; 
             text-transform: uppercase; 
             cursor: pointer;
+            box-shadow: inset 0 0 5px rgba(0,255,51,0.3);
         }
         button.btn-main:active { 
-            background-color: #00FF00; 
+            background-color: #00FF33; 
             color: #000000;
         }
         
         .summary-box {
             background-color: #001100;
-            border: 1px solid #00FF00;
+            border: 1px dashed #00FF33;
             padding: 8px;
             margin-top: 15px;
-            font-size: 13px;
-            color: #00FF00;
+            font-size: 12px;
+            color: #00FF33;
             font-weight: bold;
             text-align: center;
         }
 
         .filter-container {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 12px;
             margin-bottom: 5px;
         }
 
@@ -162,19 +208,19 @@
             margin-top: 5px; 
         }
         th, td { 
-            border: 1px solid #00FF00; 
+            border: 1px solid #00AA22; 
             padding: 8px; 
             text-align: left; 
-            font-size: 14px; 
+            font-size: 13px; 
         }
         th { 
-            background-color: #00FF00; 
-            color: #000000; 
+            background-color: #002200; 
+            color: #00FF33; 
             text-align: center; 
         }
         td {
             background-color: #000000;
-            color: #00FF00;
+            color: #00FF33;
         }
         
         .btn-del {
@@ -186,24 +232,20 @@
             padding: 2px 6px;
             cursor: pointer;
         }
-        .btn-del:active {
-            background-color: #FF3333;
-            color: #000000;
-        }
         
         .control-zone {
             margin-top: 20px;
-            border-top: 1px dashed #00FF00;
+            border-top: 2px double #00FF33;
             padding-top: 15px;
         }
         .btn-danger {
-            background-color: #330000;
+            background-color: #220000;
             color: #FF3333;
             border: 1px solid #FF3333;
             padding: 10px;
             font-family: "Courier New", monospace;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             width: 48%;
             float: left;
@@ -217,7 +259,7 @@
             padding: 10px;
             font-family: "Courier New", monospace;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             width: 48%;
             float: right;
@@ -226,12 +268,12 @@
 
         .export-area {
             width: 100%;
-            height: 80px;
+            height: 90px;
             background-color: #000000;
-            color: #00FF00;
-            border: 1px dashed #00FF00;
+            color: #00FF33;
+            border: 1px dashed #00FF33;
             font-family: "Courier New", monospace;
-            font-size: 12px;
+            font-size: 11px;
             margin-top: 10px;
             padding: 5px;
             box-sizing: border-box;
@@ -242,16 +284,16 @@
 <body>
     <div class="box">
         <div class="status-bar">
-            <div class="status-left">LIGHTYEARX-MOTOREX_BIONIC 4.0</div>
-            <div class="status-right">[STATUS: SECURE]</div>
+            <div class="status-left">SYS.LOG // LIGHTYEARX-MOTOREX_BIONIC 5.0</div>
+            <div class="status-right">● ONLINE</div>
             <div style="clear:both;"></div>
         </div>
 
-        <h1>TACTICAL RATION LOG</h1>
-        <div id="date-text" class="date">LOADING...</div>
+        <h1>TACTICAL COMS RATION LOG</h1>
+        <div id="date-text" class="date">LOADING INDEX...</div>
         
         <div class="field">
-            <label>TIME (HH:MM):</label>
+            <label>[SYS.TIME] // INPUT CURRENT TIME</label>
             <div class="time-row">
                 <div class="time-cell-input">
                     <input type="text" id="tx-time" value="00:00">
@@ -266,16 +308,16 @@
         </div>
         
         <div class="field">
-            <label>CATEGORY:</label>
+            <label>[SYS.CAT] // SELECT DATA CATEGORY</label>
             <select id="tx-type">
-                <option value="FOOD">FOOD</option>
-                <option value="DRINK">DRINK</option>
+                <option value="FOOD">FOOD (SUPPLY)</option>
+                <option value="DRINK">DRINK (HYDRATION)</option>
             </select>
         </div>
         
         <div class="field">
-            <label>DESCRIPTION:</label>
-            <input type="text" id="tx-desc" placeholder="ENTER RATION">
+            <label>[SYS.DESC] // ENTER FIELD DETAILS</label>
+            <input type="text" id="tx-desc" placeholder="AWAITING INPUT...">
             
             <div class="preset-container">
                 <div class="btn-preset" onclick="setPreset('WATER', 'DRINK')">+ WATER</div>
@@ -285,27 +327,27 @@
             </div>
         </div>
         
-        <button type="button" class="btn-main" onclick="addData()">LOG ENTRY</button>
+        <button type="button" class="btn-main" onclick="addData()">EXECUTE LOG ENTRY</button>
         
         <div class="summary-box" id="summary-text">
-            TOTAL RATIONS: FOOD [0] | DRINK [0]
+            COUNTER // FOOD_UNIT: [0] | DRINK_UNIT: [0]
         </div>
 
         <div class="filter-container">
-            <span style="font-size:12px; font-weight:bold; margin-right:5px; color:#00AA00;">FILTER:</span>
-            <div class="btn-preset" id="f-all" onclick="setFilter('ALL')" style="color:#000; background:#00FF00;">ALL</div>
-            <div class="btn-preset" id="f-food" onclick="setFilter('FOOD')">FOOD</div>
-            <div class="btn-preset" id="f-drink" onclick="setFilter('DRINK')">DRINK</div>
+            <span style="font-size:11px; font-weight:bold; margin-right:5px; color:#00AA22;">DISPLAY_FILTER:</span>
+            <div class="btn-preset" id="f-all" onclick="setFilter('ALL')" style="color:#000; background:#00FF33;">[ALL]</div>
+            <div class="btn-preset" id="f-food" onclick="setFilter('FOOD')">[FOOD]</div>
+            <div class="btn-preset" id="f-drink" onclick="setFilter('DRINK')">[DRINK]</div>
         </div>
 
-        <h2>DAILY LOGS</h2>
+        <h2>DAILY MONITOR LOGS</h2>
         <table>
             <thead>
                 <tr>
-                    <th style="width:20%">TIME</th>
-                    <th style="width:20%">CAT</th>
-                    <th>DETAILS</th>
-                    <th style="width:12%">ACT</th>
+                    <th style="width:20%">TIMESTAMP</th>
+                    <th style="width:25%">IDENT</th>
+                    <th>DECRYPTED_DATA</th>
+                    <th style="width:12%">TERM</th>
                 </tr>
             </thead>
             <tbody id="log-table-body">
@@ -313,8 +355,8 @@
         </table>
 
         <div class="control-zone">
-            <button type="button" class="btn-danger" onclick="nuclearReset()">NUCLEAR RESET</button>
-            <button type="button" class="btn-utility" onclick="toggleExport()">EXPORT DATA</button>
+            <button type="button" class="btn-danger" onclick="nuclearReset()">CORE WIPEOUT</button>
+            <button type="button" class="btn-utility" onclick="toggleExport()">DUMP DATALOG</button>
             <div style="clear:both;"></div>
             <textarea id="export-output" class="export-area" readonly></textarea>
         </div>
@@ -328,13 +370,13 @@
             var d = new Date();
             var days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
             var months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
-            document.getElementById("date-text").innerHTML = days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+            document.getElementById("date-text").innerHTML = "INDEX: " + days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
 
             resetTimeToCurrent();
 
             try {
-                // เปลี่ยนคีย์จำข้อมูลเป็น v4 เพื่อให้เคลียร์แคชสีเก่าแบบหมดจด
-                var cache = localStorage.getItem("mil_log_data_v4");
+                // อัปเดตคีย์ฐานข้อมูลเพื่อรองรับ UI โครงสร้างแบบ 5.0
+                var cache = localStorage.getItem("mil_log_data_v5");
                 if(cache) {
                     listData = JSON.parse(cache);
                     refreshTable();
@@ -383,7 +425,7 @@
             var desc = document.getElementById("tx-desc").value;
 
             if(t == "" || desc == "") {
-                alert("ENTER ALL DETAILS FIRST!");
+                alert("CRITICAL ERROR: DATA INPUT INCOMPLETE!");
                 return;
             }
 
@@ -404,7 +446,7 @@
         }
 
         function deleteData(index) {
-            if(confirm("CONFIRM DELETION OF THIS ENTRY?")) {
+            if(confirm("TERMINATE THIS LOG ENTRY FROM CORE DATA?")) {
                 listData.splice(index, 1);
                 saveToStorage();
                 refreshTable();
@@ -414,20 +456,20 @@
         function setFilter(filterType) {
             currentFilter = filterType;
             
-            document.getElementById("f-all").style.background = (filterType === "ALL") ? "#00FF00" : "#001100";
-            document.getElementById("f-all").style.color = (filterType === "ALL") ? "#000" : "#00FF00";
+            document.getElementById("f-all").style.background = (filterType === "ALL") ? "#00FF33" : "#001100";
+            document.getElementById("f-all").style.color = (filterType === "ALL") ? "#000" : "#00FF33";
             
-            document.getElementById("f-food").style.background = (filterType === "FOOD") ? "#00FF00" : "#001100";
-            document.getElementById("f-food").style.color = (filterType === "FOOD") ? "#000" : "#00FF00";
+            document.getElementById("f-food").style.background = (filterType === "FOOD") ? "#00FF33" : "#001100";
+            document.getElementById("f-food").style.color = (filterType === "FOOD") ? "#000" : "#00FF33";
             
-            document.getElementById("f-drink").style.background = (filterType === "DRINK") ? "#00FF00" : "#001100";
-            document.getElementById("f-drink").style.color = (filterType === "DRINK") ? "#000" : "#00FF00";
+            document.getElementById("f-drink").style.background = (filterType === "DRINK") ? "#00FF33" : "#001100";
+            document.getElementById("f-drink").style.color = (filterType === "DRINK") ? "#000" : "#00FF33";
 
             refreshTable();
         }
 
         function nuclearReset() {
-            if(confirm("CRITICAL WARNING: WIPE ALL DAILY LOG DATA?")) {
+            if(confirm("⚠️ ALERT: CONFIRM COMPLETE OVERWRITE AND WIPE OF SYSTEM DATALOG?")) {
                 listData = [];
                 saveToStorage();
                 refreshTable();
@@ -442,16 +484,16 @@
             } else {
                 var textResult = "";
                 for(var i=0; i<listData.length; i++) {
-                    textResult += "[" + listData[i].time + "] " + listData[i].type + ": " + listData[i].desc + "\n";
+                    textResult += "[" + listData[i].time + "] " + listData[i].type + " >> " + listData[i].desc + "\n";
                 }
-                area.value = textResult ? textResult : "NO DATA AVAILABLE.";
+                area.value = textResult ? textResult : "SYSTEM STORAGE IS EMPTY.";
                 area.style.display = "block";
             }
         }
 
         function saveToStorage() {
             try {
-                localStorage.setItem("mil_log_data_v4", JSON.stringify(listData));
+                localStorage.setItem("mil_log_data_v5", JSON.stringify(listData));
             } catch(e) {}
         }
 
@@ -469,15 +511,15 @@
                 }
 
                 html += "<tr>";
-                html += "<td style='text-align:center; font-weight:bold;'>" + listData[i].time + "</td>";
-                html += "<td style='text-align:center; font-weight:bold;'>" + listData[i].type + "</td>";
-                html += "<td>" + listData[i].desc + "</td>";
+                html += "<td style='text-align:center; font-weight:bold; color:#00FF33;'>" + listData[i].time + "</td>";
+                html += "<td style='text-align:center; font-weight:bold; color:#00AA22;'>" + listData[i].type + "</td>";
+                html += "<td style='color:#00FF33;'>" + listData[i].desc + "</td>";
                 html += "<td style='text-align:center;'><button class='btn-del' onclick='deleteData(" + i + ")'>X</button></td>";
                 html += "</tr>";
             }
             
             document.getElementById("log-table-body").innerHTML = html;
-            document.getElementById("summary-text").innerHTML = "TOTAL RATIONS: FOOD [" + foodCount + "] | DRINK [" + drinkCount + "]";
+            document.getElementById("summary-text").innerHTML = "COUNTER // FOOD_UNIT: [" + foodCount + "] | DRINK_UNIT: [" + drinkCount + "]";
         }
     </script>
 </body>
