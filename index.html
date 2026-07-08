@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LIGHTYEARX-MOTOREX V5</title>
     <style>
+        /* TACTICAL HACKER & MILITARY TERMINAL HUD */
         body { 
             background-color: #000500; 
             color: #00FF33; 
@@ -16,74 +17,166 @@
                               linear-gradient(90deg, rgba(0, 50, 0, 0.1) 1px, transparent 1px);
             background-size: 20px 20px;
         }
+        
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 99999;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
 
         .box { 
-            width: 100%; 
-            max-width: 100%;
-            margin: 0; 
+            max-width: 500px; 
+            margin: 0 auto; 
             background-color: rgba(0, 8, 0, 0.9); 
             padding: 15px; 
             border: 2px solid #00FF33; 
             position: relative;
-            box-sizing: border-box;
             box-shadow: 0 0 15px rgba(0, 255, 51, 0.2);
         }
         
         .box::before {
             content: "[ OPERATIONAL HUD ]";
             position: absolute;
-            top: -12px;
-            left: 20px;
+            top: -10px;
+            left: 15px;
             background: #000500;
             padding: 0 5px;
             font-size: 10px;
             color: #00FF33;
             letter-spacing: 2px;
-            z-index: 10;
         }
 
-        h1, h2 { text-align: center; color: #00FF33; margin: 10px 0; border-bottom: 2px dashed #00FF33; padding-bottom: 5px; font-size: 20px; }
-        .status-bar { width: 100%; font-size: 11px; color: #00AA22; border-bottom: 1px solid #00FF33; padding-bottom: 6px; margin-bottom: 12px; }
-        .status-left { float: left; }
-        .status-right { float: right; color: #00FF33; animation: blink 1.5s infinite; }
+        h1, h2 { 
+            text-align: center; 
+            color: #00FF33; 
+            margin: 10px 0; 
+            border-bottom: 2px dashed #00FF33; 
+            padding-bottom: 5px; 
+            font-size: 20px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(0, 255, 51, 0.5);
+        }
+        
+        .status-bar {
+            width: 100%;
+            font-size: 11px;
+            color: #00AA22;
+            border-bottom: 1px solid #00FF33;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
+        }
+        .status-left { float: left; width: 70%; font-weight: bold; }
+        .status-right { float: right; width: 30%; text-align: right; color: #00FF33; font-weight: bold; animation: blink 1.5s infinite; }
+        
         @keyframes blink { 0% { opacity: 1.0; } 50% { opacity: 0.3; } 100% { opacity: 1.0; } }
         
         .date { text-align: center; color: #00FF33; font-weight: bold; margin-bottom: 15px; font-size: 16px; }
         .field { margin-bottom: 14px; border-left: 3px solid #00AA22; padding-left: 8px; }
         label { display: block; margin-bottom: 4px; font-weight: bold; color: #00AA22; font-size: 12px; }
         
-        input, select { width: 100%; padding: 8px; background-color: #000000; color: #00FF33; border: 1px solid #00AA22; font-family: "Courier New", monospace; font-size: 16px; box-sizing: border-box; -webkit-appearance: none; appearance: none; }
+        .time-row { display: table; width: 100%; }
+        .time-cell-input { display: table-cell; width: 35%; }
+        .time-cell-btns { display: table-cell; width: 65%; text-align: right; vertical-align: middle; }
+        
+        input, select { 
+            width: 100%; 
+            padding: 8px; 
+            background-color: #000000; 
+            color: #00FF33; 
+            border: 1px solid #00AA22; 
+            font-family: "Courier New", monospace; 
+            font-size: 16px; 
+            box-sizing: border-box;
+            /* ตัดสีพื้นหลังตัวเลือกออก */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        /* สำหรับ Option ใน select ให้เป็นสีดำ */
         select option { background-color: #000; color: #00FF33; }
 
-        .btn-preset { display: inline-block; padding: 5px 8px; background-color: #001100; color: #00FF33; border: 1px solid #00AA22; font-size: 11px; font-weight: bold; margin: 2px; cursor: pointer; }
-        button.btn-main { width: 100%; padding: 12px; background-color: #002200; color: #00FF33; border: 2px solid #00FF33; font-family: inherit; font-weight: bold; margin-top: 5px; cursor: pointer; }
+        .preset-container { margin-top: 5px; margin-bottom: 5px; }
+        .btn-preset {
+            display: inline-block;
+            padding: 5px 8px;
+            background-color: #001100;
+            color: #00FF33;
+            border: 1px solid #00AA22;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 3px;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .btn-preset:active { background-color: #00FF33; color: #000000; }
+
+        button.btn-main { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #002200; 
+            color: #00FF33; 
+            border: 2px solid #00FF33; 
+            font-family: "Courier New", monospace; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-top: 5px; 
+            text-transform: uppercase; 
+            cursor: pointer;
+            box-shadow: inset 0 0 5px rgba(0,255,51,0.3);
+        }
+        button.btn-main:active { background-color: #00FF33; color: #000000; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
-        th, td { border: 1px solid #00AA22; padding: 8px; text-align: center; font-size: 12px; word-wrap: break-word; }
+        .summary-box { background-color: #001100; border: 1px dashed #00FF33; padding: 8px; margin-top: 15px; font-size: 12px; color: #00FF33; font-weight: bold; text-align: center; }
+        .filter-container { text-align: center; margin-top: 12px; margin-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th, td { border: 1px solid #00AA22; padding: 8px; text-align: left; font-size: 13px; }
+        th { background-color: #002200; color: #00FF33; text-align: center; }
+        td { background-color: #000000; color: #00FF33; }
         
-        .btn-del { background-color: #220000; color: #FF3333; border: 1px solid #FF3333; padding: 2px 6px; cursor: pointer; }
-        .control-zone { margin-top: 20px; border-top: 2px double #00FF33; padding-top: 15px; display: flex; gap: 10px; }
-        .btn-danger, .btn-utility { flex: 1; padding: 10px; font-family: inherit; font-weight: bold; cursor: pointer; }
+        .btn-del { background-color: #220000; color: #FF3333; border: 1px solid #FF3333; font-family: "Courier New", monospace; font-weight: bold; padding: 2px 6px; cursor: pointer; }
+        
+        .control-zone { margin-top: 20px; border-top: 2px double #00FF33; padding-top: 15px; }
+        .btn-danger { background-color: #220000; color: #FF3333; border: 1px solid #FF3333; padding: 10px; font-family: "Courier New", monospace; font-weight: bold; font-size: 12px; cursor: pointer; width: 48%; float: left; }
+        .btn-danger:active { background-color: #FF3333; color: #000000; }
+        
+        .btn-utility { background-color: #001122; color: #3399FF; border: 1px solid #3399FF; padding: 10px; font-family: "Courier New", monospace; font-weight: bold; font-size: 12px; cursor: pointer; width: 48%; float: right; }
+        .btn-utility:active { background-color: #3399FF; color: #000000; }
+
+        .export-area { width: 100%; height: 90px; background-color: #000000; color: #00FF33; border: 1px dashed #00FF33; font-family: "Courier New", monospace; font-size: 11px; margin-top: 10px; padding: 5px; box-sizing: border-box; display: none; }
     </style>
 </head>
 <body>
     <div class="box">
         <div class="status-bar">
-            <div class="status-left">SYS.LOG // LIGHTYEARX-MOTOREX_BIONIC 5.4</div>
+            <div class="status-left">SYS.LOG // LIGHTYEARX-MOTOREX_BIONIC 5.5A</div>
             <div class="status-right">● ONLINE</div>
             <div style="clear:both;"></div>
         </div>
 
         <h1>TACTICAL COMS RATION LOG</h1>
-        <div id="date-text" class="date"></div>
+        <div id="date-text" class="date">LOADING INDEX...</div>
         
         <div class="field">
-            <label>[SYS.TIME]</label>
-            <input type="text" id="tx-time" value="00:00">
+            <label>[SYS.TIME] // INPUT CURRENT TIME</label>
+            <div class="time-row">
+                <div class="time-cell-input"><input type="text" id="tx-time" value="00:00"></div>
+                <div class="time-cell-btns">
+                    <div class="btn-preset" onclick="modifyTime(-10)">-10M</div>
+                    <div class="btn-preset" onclick="modifyTime(-5)">-5M</div>
+                    <div class="btn-preset" onclick="modifyTime(5)">+5M</div>
+                    <div class="btn-preset" onclick="modifyTime(10)">+10M</div>
+                </div>
+            </div>
         </div>
         
         <div class="field">
-            <label>[SYS.CAT]</label>
+            <label>[SYS.CAT] // SELECT DATA CATEGORY</label>
             <select id="tx-type">
                 <option value="FOOD">FOOD (SUPPLY)</option>
                 <option value="DRINK">DRINK (HYDRATION)</option>
@@ -91,51 +184,115 @@
         </div>
         
         <div class="field">
-            <label>[SYS.DESC]</label>
+            <label>[SYS.DESC] // ENTER FIELD DETAILS</label>
             <input type="text" id="tx-desc" placeholder="AWAITING INPUT...">
+            <div class="preset-container">
+                <div class="btn-preset" onclick="setPreset('WATER', 'DRINK')">+ WATER</div>
+                <div class="btn-preset" onclick="setPreset('COFFEE', 'DRINK')">+ COFFEE</div>
+                <div class="btn-preset" onclick="setPreset('MRE RATION', 'FOOD')">+ MRE</div>
+                <div class="btn-preset" onclick="setPreset('SNACK', 'FOOD')">+ SNACK</div>
+            </div>
         </div>
         
         <button type="button" class="btn-main" onclick="addData()">EXECUTE LOG ENTRY</button>
         
-        <div class="summary-box" id="summary-text" style="text-align:center; margin-top:10px; color:#00FF33;">COUNTER // FOOD: [0] | DRINK: [0]</div>
+        <div class="summary-box" id="summary-text">COUNTER // FOOD_UNIT: [0] | DRINK_UNIT: [0]</div>
+
+        <div class="filter-container">
+            <span style="font-size:11px; font-weight:bold; margin-right:5px; color:#00AA22;">DISPLAY_FILTER:</span>
+            <div class="btn-preset" id="f-all" onclick="setFilter('ALL')" style="color:#000; background:#00FF33;">[ALL]</div>
+            <div class="btn-preset" id="f-food" onclick="setFilter('FOOD')">[FOOD]</div>
+            <div class="btn-preset" id="f-drink" onclick="setFilter('DRINK')">[DRINK]</div>
+        </div>
 
         <h2>DAILY MONITOR LOGS</h2>
         <table>
-            <thead><tr><th>TIME</th><th>CAT</th><th>DATA</th><th>ACT</th></tr></thead>
+            <thead><tr><th style="width:20%">TIMESTAMP</th><th style="width:25%">IDENT</th><th>DECRYPTED_DATA</th><th style="width:12%">TERM</th></tr></thead>
             <tbody id="log-table-body"></tbody>
         </table>
 
         <div class="control-zone">
             <button type="button" class="btn-danger" onclick="nuclearReset()">CORE WIPEOUT</button>
             <button type="button" class="btn-utility" onclick="toggleExport()">DUMP DATALOG</button>
+            <div style="clear:both;"></div>
+            <textarea id="export-output" class="export-area" readonly></textarea>
         </div>
-        <textarea id="export-output" style="width:100%; height:80px; background:#000; color:#00FF33; margin-top:10px; display:none;"></textarea>
     </div>
 
     <script>
-        var listData = JSON.parse(localStorage.getItem("mil_log_data_v5") || "[]");
+        var listData = [];
+        var currentFilter = "ALL";
+
+        window.onload = function() {
+            var d = new Date();
+            var days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+            var months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+            document.getElementById("date-text").innerHTML = "INDEX: " + days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+            resetTimeToCurrent();
+            try {
+                var cache = localStorage.getItem("mil_log_data_v5");
+                if(cache) { listData = JSON.parse(cache); refreshTable(); }
+            } catch(e) {}
+        };
+
+        function setPreset(text, cat) { document.getElementById("tx-desc").value = text; document.getElementById("tx-type").value = cat; }
+        function resetTimeToCurrent() {
+            var d = new Date(); var hr = d.getHours(); var min = d.getMinutes();
+            if(hr < 10) hr = "0" + hr; if(min < 10) min = "0" + min;
+            document.getElementById("tx-time").value = hr + ":" + min;
+        }
+        function modifyTime(mins) {
+            var timeInput = document.getElementById("tx-time").value;
+            var parts = timeInput.split(":");
+            var hh = parseInt(parts[0], 10); var mm = parseInt(parts[1], 10);
+            if (isNaN(hh) || isNaN(mm)) return;
+            var totalMins = (hh * 60) + mm + mins;
+            if (totalMins < 0) totalMins += 1440; 
+            totalMins = totalMins % 1440;
+            var newH = Math.floor(totalMins / 60); var newM = totalMins % 60;
+            if (newH < 10) newH = "0" + newH; if (newM < 10) newM = "0" + newM;
+            document.getElementById("tx-time").value = newH + ":" + newM;
+        }
         function addData() {
-            var t = document.getElementById("tx-time").value;
-            var type = document.getElementById("tx-type").value;
-            var desc = document.getElementById("tx-desc").value;
+            var t = document.getElementById("tx-time").value; var type = document.getElementById("tx-type").value; var desc = document.getElementById("tx-desc").value;
+            if(t == "" || desc == "") { alert("CRITICAL ERROR: DATA INPUT INCOMPLETE!"); return; }
             listData.push({time: t, type: type, desc: desc.toUpperCase()});
-            localStorage.setItem("mil_log_data_v5", JSON.stringify(listData));
-            document.getElementById("tx-desc").value = "";
+            listData.sort(function(a, b) { return a.time.localeCompare(b.time); });
+            saveToStorage(); document.getElementById("tx-desc").value = ""; resetTimeToCurrent(); refreshTable();
+        }
+        function deleteData(index) { if(confirm("TERMINATE THIS LOG ENTRY FROM CORE DATA?")) { listData.splice(index, 1); saveToStorage(); refreshTable(); } }
+        function setFilter(filterType) {
+            currentFilter = filterType;
+            document.getElementById("f-all").style.background = (filterType === "ALL") ? "#00FF33" : "#001100";
+            document.getElementById("f-all").style.color = (filterType === "ALL") ? "#000" : "#00FF33";
+            document.getElementById("f-food").style.background = (filterType === "FOOD") ? "#00FF33" : "#001100";
+            document.getElementById("f-food").style.color = (filterType === "FOOD") ? "#000" : "#00FF33";
+            document.getElementById("f-drink").style.background = (filterType === "DRINK") ? "#00FF33" : "#001100";
+            document.getElementById("f-drink").style.color = (filterType === "DRINK") ? "#000" : "#00FF33";
             refreshTable();
         }
-        function refreshTable() {
-            var html = "", f = 0, d = 0;
-            listData.forEach((item, i) => {
-                if(item.type === "FOOD") f++; else d++;
-                html += "<tr><td>"+item.time+"</td><td>"+item.type+"</td><td>"+item.desc+"</td><td><button class='btn-del' onclick='del("+i+")'>X</button></td></tr>";
-            });
-            document.getElementById("log-table-body").innerHTML = html;
-            document.getElementById("summary-text").innerHTML = "COUNTER // FOOD: ["+f+"] | DRINK: ["+d+"]";
+        function nuclearReset() { if(confirm("⚠️ ALERT: CONFIRM COMPLETE OVERWRITE AND WIPE OF SYSTEM DATALOG?")) { listData = []; saveToStorage(); refreshTable(); document.getElementById("export-output").style.display = "none"; } }
+        function toggleExport() {
+            var area = document.getElementById("export-output");
+            if(area.style.display === "block") { area.style.display = "none"; } 
+            else {
+                var textResult = "";
+                for(var i=0; i<listData.length; i++) { textResult += "[" + listData[i].time + "] " + listData[i].type + " >> " + listData[i].desc + "\n"; }
+                area.value = textResult ? textResult : "SYSTEM STORAGE IS EMPTY.";
+                area.style.display = "block";
+            }
         }
-        function del(i) { listData.splice(i, 1); localStorage.setItem("mil_log_data_v5", JSON.stringify(listData)); refreshTable(); }
-        function nuclearReset() { listData = []; localStorage.clear(); refreshTable(); }
-        function toggleExport() { var area = document.getElementById("export-output"); area.style.display = (area.style.display === "block") ? "none" : "block"; area.value = JSON.stringify(listData); }
-        window.onload = function() { refreshTable(); document.getElementById("date-text").innerHTML = new Date().toDateString().toUpperCase(); }
+        function saveToStorage() { try { localStorage.setItem("mil_log_data_v5", JSON.stringify(listData)); } catch(e) {} }
+        function refreshTable() {
+            var html = ""; var foodCount = 0; var drinkCount = 0;
+            for(var i = 0; i < listData.length; i++) {
+                if(listData[i].type === "FOOD") foodCount++; if(listData[i].type === "DRINK") drinkCount++;
+                if(currentFilter !== "ALL" && listData[i].type !== currentFilter) continue;
+                html += "<tr><td style='text-align:center; font-weight:bold; color:#00FF33;'>" + listData[i].time + "</td><td style='text-align:center; font-weight:bold; color:#00AA22;'>" + listData[i].type + "</td><td style='color:#00FF33;'>" + listData[i].desc + "</td><td style='text-align:center;'><button class='btn-del' onclick='deleteData(" + i + ")'>X</button></td></tr>";
+            }
+            document.getElementById("log-table-body").innerHTML = html;
+            document.getElementById("summary-text").innerHTML = "COUNTER // FOOD_UNIT: [" + foodCount + "] | DRINK_UNIT: [" + drinkCount + "]";
+        }
     </script>
 </body>
 </html>
