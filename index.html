@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TACTICAL RATION LOG</title>
     <style>
-        /* ธีมทหาร: พื้นหลังสีเขียวน้ำทะเล และ สีม่วงพิษ (Poison Purple) */
+        /* ธีมทหารสีเขียวน้ำทะเล + สีม่วงพิษ (Poison Purple) */
         body {
             background-color: #2F4F4F; 
             color: #FFFFFF;
@@ -17,7 +17,7 @@
 
         h1, h2 {
             text-align: center;
-            border-bottom: 2px solid #9D00FF; /* เปลี่ยนเป็นสีม่วงพิษ */
+            border-bottom: 3px solid #9D00FF; 
             padding-bottom: 10px;
             color: #FFFFFF;
         }
@@ -27,7 +27,7 @@
             margin: 0 auto;
             background-color: #223322;
             padding: 20px;
-            border: 2px solid #9D00FF; /* กรอบสีม่วงพิษ */
+            border: 2px solid #9D00FF; 
             border-radius: 5px;
         }
 
@@ -36,7 +36,7 @@
             font-size: 1.2em;
             font-weight: bold;
             margin-bottom: 20px;
-            color: #9D00FF; /* สีม่วงพิษ */
+            color: #9D00FF; 
         }
 
         .form-group {
@@ -49,14 +49,14 @@
             font-weight: bold;
         }
 
-        input[type="time"],
-        select,
-        input[type="text"] {
+        /* ใช้ฟอนต์ 16px เพื่อไม่ให้ iOS Zoom หน้าจอเอง */
+        input[type="text"],
+        select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background-color: #1A2B1A;
             color: #FFFFFF;
-            border: 1px solid #9D00FF; /* ขอบสีม่วงพิษ */
+            border: 1px solid #9D00FF; 
             font-family: "Courier New", Courier, monospace;
             font-size: 16px; 
             box-sizing: border-box;
@@ -68,7 +68,7 @@
             padding: 15px;
             background-color: #4B5320; 
             color: #FFFFFF;
-            border: 3px solid #9D00FF; /* ขอบปุ่มสีม่วงพิษ */
+            border: 3px solid #9D00FF; 
             font-family: "Courier New", Courier, monospace;
             font-size: 18px;
             font-weight: bold;
@@ -84,10 +84,9 @@
 
         .log-section {
             margin-top: 30px;
-            overflow-x: auto; /* เผื่อตารางกว้างเกินจอ */
         }
 
-        /* ตั้งค่าตาราง */
+        /* ตารางสไตล์ทหาร */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -95,25 +94,24 @@
         }
 
         table, th, td {
-            border: 1px solid #9D00FF; /* เส้นตารางสีม่วงพิษ */
+            border: 2px solid #9D00FF; 
         }
 
         th {
-            background-color: #9D00FF; /* หัวตารางสีม่วงพิษ */
+            background-color: #9D00FF; 
             color: #FFFFFF;
             padding: 10px;
-            text-align: center;
+            font-size: 14px;
         }
 
         td {
             background-color: #1A2B1A;
             padding: 10px;
-            text-align: left;
-            font-size: 15px;
+            font-size: 14px;
+            word-break: break-all;
         }
         
-        /* จัดข้อความตรงกลางสำหรับคอลัมน์เวลาและประเภท */
-        td.col-time, td.col-type {
+        .col-time, .col-type {
             text-align: center;
             font-weight: bold;
         }
@@ -127,8 +125,8 @@
         <div id="current-date" class="date-display">LOADING DATE...</div>
 
         <div class="form-group">
-            <label for="time">TIME (HOURS):</label>
-            <input type="time" id="time" required>
+            <label for="time">TIME (HH:MM):</label>
+            <input type="text" id="time" placeholder="E.G. 14:30" required>
         </div>
 
         <div class="form-group">
@@ -141,19 +139,19 @@
 
         <div class="form-group">
             <label for="desc">DESCRIPTION:</label>
-            <input type="text" id="desc" placeholder="ENTER DETAILS (E.G. REDBULL)..." autocomplete="off">
+            <input type="text" id="desc" placeholder="ENTER DETAILS (E.G. REDBULL)" autocomplete="off">
         </div>
 
-        <button type="button" onclick="saveLog()">LOG ENTRY</button>
+        <button type="button" id="log-btn">LOG ENTRY</button>
 
         <div class="log-section">
             <h2>DAILY LOGS</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>TIME</th>
-                        <th>CAT</th>
-                        <th>DESCRIPTION</th>
+                        <th style="width: 20%;">TIME</th>
+                        <th style="width: 25%;">CAT</th>
+                        <th style="width: 55%;">DESCRIPTION</th>
                     </tr>
                 </thead>
                 <tbody id="log-tbody">
@@ -163,117 +161,114 @@
     </div>
 
     <script>
-        // ใช้ตัวแปรสำรองในกรณีที่ iOS 9 บล็อก LocalStorage (เช่น โหมด Private)
-        var memoryFallbackLogs = [];
+        // ใช้ตัวแปร Global แบบดั้งเดิมทั้งหมดเพื่อความเสถียรบน iOS 9
+        var globalLogs = [];
 
-        function displayCurrentDate() {
-            var dateDisplay = document.getElementById('current-date');
-            var today = new Date();
-            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            dateDisplay.innerText = today.toLocaleDateString('en-US', options).toUpperCase();
-        }
-
-        function getTodayKey() {
-            return 'rationLogs_' + new Date().toDateString();
-        }
-
-        function getLogs() {
-            var todayKey = getTodayKey();
+        window.onload = function() {
+            // 1. จัดการแสดงผลวันที่แบบดั้งเดิม (ไม่ใช้คำสั่งยุคใหม่ที่ทำ Safari iOS 9 เอ๋อ)
             try {
-                var savedLogs = localStorage.getItem(todayKey);
-                if (savedLogs) {
-                    return JSON.parse(savedLogs);
+                var days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+                var months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+                var today = new Date();
+                var dateString = days[today.getDay()] + ', ' + months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
+                document.getElementById('current-date').innerHTML = dateString;
+            } catch(e) {
+                document.getElementById('current-date').innerHTML = "DATE ERROR";
+            }
+
+            // 2. ตั้งค่าเวลาปัจจุบันลงในช่องกรอกให้อัตโนมัติ
+            try {
+                var now = new Date();
+                var hh = now.getHours();
+                var mm = now.getMinutes();
+                if (hh < 10) hh = '0' + hh;
+                if (mm < 10) mm = '0' + mm;
+                document.getElementById('time').value = hh + ':' + mm;
+            } catch(e) {}
+
+            // 3. ผูกคำสั่งปุ่มกดบันทึกผ่าน Event Listener ระดับรากฐาน
+            var btn = document.getElementById('log-btn');
+            if(btn) {
+                btn.onclick = function() {
+                    saveLogData();
+                };
+            }
+
+            // 4. โหลดข้อมูลเก่าที่เคยบันทึกไว้ขึ้นมาแสดงในตาราง
+            initLogData();
+        };
+
+        function initLogData() {
+            try {
+                var todayKey = 'ration_' + new Date().toDateString();
+                var saved = localStorage.getItem(todayKey);
+                if (saved) {
+                    globalLogs = JSON.parse(saved);
                 }
-            } catch (e) {
-                // ถ้ามี Error (เช่น Private Mode) ให้ดึงจากหน่วยความจำชั่วคราวแทน
-                return memoryFallbackLogs;
+            } catch(e) {
+                // ป้องกันกรณีเปิดโหมดส่วนตัว (Private Browsing) ไว้
             }
-            return [];
+            renderLogTable();
         }
 
-        function loadLogs() {
+        function renderLogTable() {
             var tbody = document.getElementById('log-tbody');
-            tbody.innerHTML = ''; 
+            if(!tbody) return;
             
-            var logs = getLogs();
+            tbody.innerHTML = ''; // ล้างตารางเดิมก่อนวาดใหม่
 
-            for (var i = 0; i < logs.length; i++) {
-                var tr = document.createElement('tr');
+            for (var i = 0; i < globalLogs.length; i++) {
+                var row = tbody.insertRow(-1); // เพิ่มแถวใหม่ต่อท้าย
                 
-                var tdTime = document.createElement('td');
-                tdTime.className = 'col-time';
-                tdTime.innerText = logs[i].time;
+                var cellTime = row.insertCell(0);
+                var cellType = row.insertCell(1);
+                var cellDesc = row.insertCell(2);
                 
-                var tdType = document.createElement('td');
-                tdType.className = 'col-type';
-                tdType.innerText = logs[i].type;
+                cellTime.className = 'col-time';
+                cellType.className = 'col-type';
                 
-                var tdDesc = document.createElement('td');
-                tdDesc.innerText = logs[i].desc;
-                
-                tr.appendChild(tdTime);
-                tr.appendChild(tdType);
-                tr.appendChild(tdDesc);
-                
-                tbody.appendChild(tr);
+                cellTime.innerHTML = globalLogs[i].time;
+                cellType.innerHTML = globalLogs[i].type;
+                cellDesc.innerHTML = globalLogs[i].desc;
             }
         }
 
-        function saveLog() {
-            var timeInput = document.getElementById('time').value;
-            var typeInput = document.getElementById('type').value;
-            var descInput = document.getElementById('desc').value;
+        function saveLogData() {
+            var timeVal = document.getElementById('time').value;
+            var typeVal = document.getElementById('type').value;
+            var descVal = document.getElementById('desc').value;
 
-            if (timeInput === '' || descInput === '') {
-                alert('PLEASE FILL IN DESCRIPTION.');
+            if (timeVal === '' || descVal === '') {
+                alert('CRITICAL: PLEASE FILL IN ALL FIELDS.');
                 return;
             }
 
+            // สร้างก้อนข้อมูลใหม่
             var newEntry = {
-                time: timeInput,
-                type: typeInput,
-                desc: descInput.toUpperCase()
+                time: timeVal,
+                type: typeVal,
+                desc: descVal.toUpperCase()
             };
 
-            var logs = getLogs();
-            logs.push(newEntry);
-            
-            // เรียงเวลาจากน้อยไปมาก
-            logs.sort(function(a, b) {
+            globalLogs.push(newEntry);
+
+            // จัดเรียงเวลาในตารางจากเช้าไปเย็นด้วยคำสั่งพื้นฐาน
+            globalLogs.sort(function(a, b) {
                 return a.time.localeCompare(b.time);
             });
 
-            var todayKey = getTodayKey();
-            
+            // พยายามเซฟลงเครื่อง ถ้าติดโหมดส่วนตัวจะข้ามไป แต่ตารางบนหน้าจอยังอัปเดตให้เห็นชั่วคราว
             try {
-                localStorage.setItem(todayKey, JSON.stringify(logs));
-                memoryFallbackLogs = logs; // สำรองข้อมูลไว้
-            } catch (e) {
-                // หาก LocalStorage บันทึกไม่ได้ ให้บันทึกลงตัวแปรสำรอง
-                memoryFallbackLogs = logs;
-            }
+                var todayKey = 'ration_' + new Date().toDateString();
+                localStorage.setItem(todayKey, JSON.stringify(globalLogs));
+            } catch(e) {}
 
-            // ล้างช่องใส่ข้อความ
+            // เคลียร์ช่องรายละเอียดหลังบันทึกเสร็จ
             document.getElementById('desc').value = '';
             
-            // อัปเดตตารางทันที
-            loadLogs();
+            // สั่งอัปเดตตารางผลลัพธ์ทันที
+            renderLogTable();
         }
-
-        function setCurrentTime() {
-            var now = new Date();
-            var hours = String(now.getHours());
-            if (hours.length < 2) hours = '0' + hours;
-            var minutes = String(now.getMinutes());
-            if (minutes.length < 2) minutes = '0' + minutes;
-            document.getElementById('time').value = hours + ':' + minutes;
-        }
-
-        window.onload = function() {
-            displayCurrentDate();
-            setCurrentTime();
-            loadLogs();
-        };
     </script>
 </body>
 </html>
