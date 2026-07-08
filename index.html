@@ -3,9 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TACTICAL LOG</title>
+    <title>TACTICAL LOG V2</title>
     <style>
-        /* ธีมทหารสีเขียวน้ำทะเล + กรอบปุ่มสีม่วงพิษ (Poison Purple) */
         body { 
             background-color: #2F4F4F; 
             color: #FFFFFF; 
@@ -29,11 +28,20 @@
             border-bottom: 2px solid #9D00FF; 
             padding-bottom: 5px; 
         }
+        .status-bar {
+            text-align: justify;
+            font-size: 11px;
+            color: #888888;
+            border-bottom: 1px dashed #9D00FF;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
         .date { 
             text-align: center; 
             color: #9D00FF; 
             font-weight: bold; 
             margin-bottom: 15px; 
+            font-size: 18px;
         }
         .field { 
             margin-bottom: 12px; 
@@ -53,25 +61,61 @@
             font-size: 16px; 
             box-sizing: border-box; 
         }
-        button { 
+        
+        /* ปุ่มคีย์ลัดสำหรับ iPad */
+        .preset-container {
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        .btn-preset {
+            display: inline-block;
+            padding: 5px 8px;
+            background-color: #112211;
+            color: #9D00FF;
+            border: 1px solid #9D00FF;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .btn-preset:active {
+            background-color: #9D00FF;
+            color: #000000;
+        }
+
+        button.btn-main { 
             width: 100%; 
-            padding: 12px; 
+            padding: 14px; 
             background-color: #4B5320; 
             color: #FFFFFF; 
             border: 3px solid #9D00FF; 
             font-family: "Courier New", monospace; 
-            font-size: 16px; 
+            font-size: 18px; 
             font-weight: bold; 
-            margin-top: 10px; 
+            margin-top: 5px; 
             text-transform: uppercase; 
         }
-        button:active { 
+        button.btn-main:active { 
             background-color: #9D00FF; 
+            color: #FFFFFF;
+        }
+        
+        /* ตารางและส่วนสรุปยอด */
+        .summary-box {
+            background-color: #051505;
+            border: 1px solid #9D00FF;
+            padding: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #9D00FF;
+            font-weight: bold;
+            text-align: center;
         }
         table { 
             width: 100%; 
             border-collapse: collapse; 
-            margin-top: 15px; 
+            margin-top: 10px; 
         }
         th, td { 
             border: 1px solid #9D00FF; 
@@ -84,10 +128,30 @@
             color: #FFFFFF; 
             text-align: center; 
         }
+        .btn-del {
+            background-color: #330000;
+            color: #FF3333;
+            border: 1px solid #FF3333;
+            font-family: "Courier New", monospace;
+            font-weight: bold;
+            padding: 2px 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-del:active {
+            background-color: #FF3333;
+            color: #FFFFFF;
+        }
     </style>
 </head>
 <body>
     <div class="box">
+        <div class="status-bar">
+            <span style="float:left;">SYS_VER: 2.0_ES5</span>
+            <span style="float:right; color:#00FF00;">[STATUS: SECURE]</span>
+            <div style="clear:both;"></div>
+        </div>
+
         <h1>TACTICAL LOG</h1>
         <div id="date-text" class="date">LOADING...</div>
         
@@ -104,18 +168,30 @@
         </div>
         <div class="field">
             <label>DESCRIPTION:</label>
-            <input type="text" id="tx-desc" placeholder="REDBULL">
+            <input type="text" id="tx-desc" placeholder="ENTER RATION">
+            
+            <div class="preset-container">
+                <div class="btn-preset" onclick="setPreset('WATER', 'DRINK')">+ WATER</div>
+                <div class="btn-preset" onclick="setPreset('COFFEE', 'DRINK')">+ COFFEE</div>
+                <div class="btn-preset" onclick="setPreset('MRE RATION', 'FOOD')">+ MRE</div>
+                <div class="btn-preset" onclick="setPreset('SNACK', 'FOOD')">+ SNACK</div>
+            </div>
         </div>
         
-        <button type="button" onclick="addData()">LOG ENTRY</button>
+        <button type="button" class="btn-main" onclick="addData()">LOG ENTRY</button>
         
+        <div class="summary-box" id="summary-text">
+            TOTAL RATIONS: FOOD [0] | DRINK [0]
+        </div>
+
         <h2>DAILY LOGS</h2>
         <table>
             <thead>
                 <tr>
-                    <th style="width:25%">TIME</th>
-                    <th style="width:25%">CAT</th>
+                    <th style="width:20%">TIME</th>
+                    <th style="width:20%">CAT</th>
                     <th>DETAILS</th>
+                    <th style="width:12%">ACT</th>
                 </tr>
             </thead>
             <tbody id="log-table-body">
@@ -124,32 +200,39 @@
     </div>
 
     <script>
-        // ใช้ตัวแปร Array ธรรมดาในการคุมคลังข้อมูล
         var listData = [];
 
         window.onload = function() {
-            // เซ็ตวันที่ภาษาอังกฤษแบบ Manual ป้องกันตระกูลเครื่องเก่าค้าง
             var d = new Date();
             var days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
             var months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
             document.getElementById("date-text").innerHTML = days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
 
-            // เซ็ตเวลาปัจจุบันเข้าช่องอินพุตให้ทันที
-            var hr = d.getHours();
-            var min = d.getMinutes();
-            if(hr < 10) hr = "0" + hr;
-            if(min < 10) min = "0" + min;
-            document.getElementById("tx-time").value = hr + ":" + min;
+            resetTimeToCurrent();
 
-            // ดึงความจำเก่า (ถ้ามี)
             try {
-                var cache = localStorage.getItem("mil_log_data");
+                var cache = localStorage.getItem("mil_log_data_v2");
                 if(cache) {
                     listData = JSON.parse(cache);
                     refreshTable();
                 }
             } catch(e) {}
         };
+
+        // ฟังก์ชันช่วยใส่ค่าด่วน
+        function setPreset(text, cat) {
+            document.getElementById("tx-desc").value = text;
+            document.getElementById("tx-type").value = cat;
+        }
+
+        function resetTimeToCurrent() {
+            var d = new Date();
+            var hr = d.getHours();
+            var min = d.getMinutes();
+            if(hr < 10) hr = "0" + hr;
+            if(min < 10) min = "0" + min;
+            document.getElementById("tx-time").value = hr + ":" + min;
+        }
 
         function addData() {
             var t = document.getElementById("tx-time").value;
@@ -161,41 +244,60 @@
                 return;
             }
 
-            // บันทึกข้อมูลลง Array
             listData.push({
                 time: t,
                 type: type,
                 desc: desc.toUpperCase()
             });
 
-            // เรียงลำดับเวลา (เช้าไปเย็น)
             listData.sort(function(a, b) {
                 return a.time.localeCompare(b.time);
             });
 
-            // เซฟลงเครื่อง (ถ้าเปิด Privateโหมดจะเซฟไม่เข้า แต่หน้าจอจะยังแสดงผลให้)
-            try {
-                localStorage.setItem("mil_log_data", JSON.stringify(listData));
-            } catch(e) {}
-
-            // เคลียร์ช่องพิมพ์รายละเอียด
+            saveToStorage();
             document.getElementById("tx-desc").value = "";
-
-            // สั่งอัปเดตตารางทันที
+            resetTimeToCurrent(); // อัปเดตเวลารอบถัดไปให้เป็นปัจจุบันเสมอ
             refreshTable();
         }
 
+        // ฟังก์ชันลบข้อมูลรายแถว
+        function deleteData(index) {
+            if(confirm("CONFIRM DELETION OF THIS ENTRY?")) {
+                listData.splice(index, 1);
+                saveToStorage();
+                refreshTable();
+            }
+        }
+
+        function saveToStorage() {
+            try {
+                localStorage.setItem("mil_log_data_v2", JSON.stringify(listData));
+            } catch(e) {}
+        }
+
         function refreshTable() {
-            // ใช้วิธีต่อข้อความ (String Concatenation) แบบยุคเก่า เพื่อบังคับให้เบราว์เซอร์วาดใหม่ชัวร์ๆ
             var html = "";
+            var foodCount = 0;
+            var drinkCount = 0;
+
             for(var i = 0; i < listData.length; i++) {
+                // นับยอดสรุป
+                if(listData[i].type === "FOOD") foodCount++;
+                if(listData[i].type === "DRINK") drinkCount++;
+
+                // วาดแถวตารางพร้อมปุ่มลบรายตัว
                 html += "<tr>";
                 html += "<td style='text-align:center; font-weight:bold;'>" + listData[i].time + "</td>";
                 html += "<td style='text-align:center; font-weight:bold;'>" + listData[i].type + "</td>";
                 html += "<td>" + listData[i].desc + "</td>";
+                html += "<td style='text-align:center;'><button class='btn-del' onclick='deleteData(" + i + ")'>X</button></td>";
                 html += "</tr>";
             }
+            
             document.getElementById("log-table-body").innerHTML = html;
+            
+            // อัปเดตตัวเลขสรุปผลยอดกินดื่ม
+            document.getElementById("summary-text").innerHTML = "TOTAL RATIONS: FOOD [" + foodCount + "] | DRINK [" + drinkCount + "]";
         }
     </script>
 </body>
