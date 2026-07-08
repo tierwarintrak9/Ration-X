@@ -1,273 +1,201 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TACTICAL RATION LOG</title>
+    <title>TACTICAL LOG</title>
     <style>
-        /* ธีมทหารสีเขียวน้ำทะเล + สีม่วงพิษ (Poison Purple) */
-        body {
+        /* ธีมทหารสีเขียวน้ำทะเล + กรอบปุ่มสีม่วงพิษ (Poison Purple) */
+        body { 
             background-color: #2F4F4F; 
-            color: #FFFFFF;
-            font-family: "Courier New", Courier, monospace;
-            text-transform: uppercase;
-            margin: 0;
-            padding: 20px;
+            color: #FFFFFF; 
+            font-family: "Courier New", monospace; 
+            text-transform: uppercase; 
+            padding: 15px; 
+            margin: 0; 
         }
-
-        h1, h2 {
-            text-align: center;
-            border-bottom: 3px solid #9D00FF; 
-            padding-bottom: 10px;
-            color: #FFFFFF;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #223322;
-            padding: 20px;
-            border: 2px solid #9D00FF; 
-            border-radius: 5px;
-        }
-
-        .date-display {
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #9D00FF; 
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        /* ใช้ฟอนต์ 16px เพื่อไม่ให้ iOS Zoom หน้าจอเอง */
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 12px;
-            background-color: #1A2B1A;
-            color: #FFFFFF;
-            border: 1px solid #9D00FF; 
-            font-family: "Courier New", Courier, monospace;
-            font-size: 16px; 
-            box-sizing: border-box;
-            text-transform: uppercase;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #4B5320; 
-            color: #FFFFFF;
+        .box { 
+            max-width: 500px; 
+            margin: 0 auto; 
+            background-color: #1A2B1A; 
+            padding: 15px; 
             border: 3px solid #9D00FF; 
-            font-family: "Courier New", Courier, monospace;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            margin-top: 10px;
+            border-radius: 4px; 
         }
-
-        button:active {
-            background-color: #9D00FF;
-            color: #FFFFFF;
+        h1, h2 { 
+            text-align: center; 
+            color: #FFFFFF; 
+            margin: 10px 0; 
+            border-bottom: 2px solid #9D00FF; 
+            padding-bottom: 5px; 
         }
-
-        .log-section {
-            margin-top: 30px;
+        .date { 
+            text-align: center; 
+            color: #9D00FF; 
+            font-weight: bold; 
+            margin-bottom: 15px; 
         }
-
-        /* ตารางสไตล์ทหาร */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        .field { 
+            margin-bottom: 12px; 
         }
-
-        table, th, td {
-            border: 2px solid #9D00FF; 
+        label { 
+            display: block; 
+            margin-bottom: 4px; 
+            font-weight: bold; 
         }
-
-        th {
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            background-color: #000000; 
+            color: #FFFFFF; 
+            border: 1px solid #9D00FF; 
+            font-family: "Courier New", monospace; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+        }
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #4B5320; 
+            color: #FFFFFF; 
+            border: 3px solid #9D00FF; 
+            font-family: "Courier New", monospace; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            text-transform: uppercase; 
+        }
+        button:active { 
             background-color: #9D00FF; 
-            color: #FFFFFF;
-            padding: 10px;
-            font-size: 14px;
         }
-
-        td {
-            background-color: #1A2B1A;
-            padding: 10px;
-            font-size: 14px;
-            word-break: break-all;
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 15px; 
         }
-        
-        .col-time, .col-type {
-            text-align: center;
-            font-weight: bold;
+        th, td { 
+            border: 1px solid #9D00FF; 
+            padding: 8px; 
+            text-align: left; 
+            font-size: 14px; 
+        }
+        th { 
+            background-color: #9D00FF; 
+            color: #FFFFFF; 
+            text-align: center; 
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>TACTICAL RATION LOG</h1>
+    <div class="box">
+        <h1>TACTICAL LOG</h1>
+        <div id="date-text" class="date">LOADING...</div>
         
-        <div id="current-date" class="date-display">LOADING DATE...</div>
-
-        <div class="form-group">
-            <label for="time">TIME (HH:MM):</label>
-            <input type="text" id="time" placeholder="E.G. 14:30" required>
+        <div class="field">
+            <label>TIME (HH:MM):</label>
+            <input type="text" id="tx-time" value="00:00">
         </div>
-
-        <div class="form-group">
-            <label for="type">CATEGORY:</label>
-            <select id="type">
+        <div class="field">
+            <label>CATEGORY:</label>
+            <select id="tx-type">
                 <option value="FOOD">FOOD</option>
                 <option value="DRINK">DRINK</option>
             </select>
         </div>
-
-        <div class="form-group">
-            <label for="desc">DESCRIPTION:</label>
-            <input type="text" id="desc" placeholder="ENTER DETAILS (E.G. REDBULL)" autocomplete="off">
+        <div class="field">
+            <label>DESCRIPTION:</label>
+            <input type="text" id="tx-desc" placeholder="REDBULL">
         </div>
-
-        <button type="button" id="log-btn">LOG ENTRY</button>
-
-        <div class="log-section">
-            <h2>DAILY LOGS</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 20%;">TIME</th>
-                        <th style="width: 25%;">CAT</th>
-                        <th style="width: 55%;">DESCRIPTION</th>
-                    </tr>
-                </thead>
-                <tbody id="log-tbody">
-                    </tbody>
-            </table>
-        </div>
+        
+        <button type="button" onclick="addData()">LOG ENTRY</button>
+        
+        <h2>DAILY LOGS</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:25%">TIME</th>
+                    <th style="width:25%">CAT</th>
+                    <th>DETAILS</th>
+                </tr>
+            </thead>
+            <tbody id="log-table-body">
+                </tbody>
+        </table>
     </div>
 
     <script>
-        // ใช้ตัวแปร Global แบบดั้งเดิมทั้งหมดเพื่อความเสถียรบน iOS 9
-        var globalLogs = [];
+        // ใช้ตัวแปร Array ธรรมดาในการคุมคลังข้อมูล
+        var listData = [];
 
         window.onload = function() {
-            // 1. จัดการแสดงผลวันที่แบบดั้งเดิม (ไม่ใช้คำสั่งยุคใหม่ที่ทำ Safari iOS 9 เอ๋อ)
-            try {
-                var days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-                var months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
-                var today = new Date();
-                var dateString = days[today.getDay()] + ', ' + months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
-                document.getElementById('current-date').innerHTML = dateString;
-            } catch(e) {
-                document.getElementById('current-date').innerHTML = "DATE ERROR";
-            }
+            // เซ็ตวันที่ภาษาอังกฤษแบบ Manual ป้องกันตระกูลเครื่องเก่าค้าง
+            var d = new Date();
+            var days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+            var months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+            document.getElementById("date-text").innerHTML = days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
 
-            // 2. ตั้งค่าเวลาปัจจุบันลงในช่องกรอกให้อัตโนมัติ
+            // เซ็ตเวลาปัจจุบันเข้าช่องอินพุตให้ทันที
+            var hr = d.getHours();
+            var min = d.getMinutes();
+            if(hr < 10) hr = "0" + hr;
+            if(min < 10) min = "0" + min;
+            document.getElementById("tx-time").value = hr + ":" + min;
+
+            // ดึงความจำเก่า (ถ้ามี)
             try {
-                var now = new Date();
-                var hh = now.getHours();
-                var mm = now.getMinutes();
-                if (hh < 10) hh = '0' + hh;
-                if (mm < 10) mm = '0' + mm;
-                document.getElementById('time').value = hh + ':' + mm;
+                var cache = localStorage.getItem("mil_log_data");
+                if(cache) {
+                    listData = JSON.parse(cache);
+                    refreshTable();
+                }
             } catch(e) {}
-
-            // 3. ผูกคำสั่งปุ่มกดบันทึกผ่าน Event Listener ระดับรากฐาน
-            var btn = document.getElementById('log-btn');
-            if(btn) {
-                btn.onclick = function() {
-                    saveLogData();
-                };
-            }
-
-            // 4. โหลดข้อมูลเก่าที่เคยบันทึกไว้ขึ้นมาแสดงในตาราง
-            initLogData();
         };
 
-        function initLogData() {
-            try {
-                var todayKey = 'ration_' + new Date().toDateString();
-                var saved = localStorage.getItem(todayKey);
-                if (saved) {
-                    globalLogs = JSON.parse(saved);
-                }
-            } catch(e) {
-                // ป้องกันกรณีเปิดโหมดส่วนตัว (Private Browsing) ไว้
-            }
-            renderLogTable();
-        }
+        function addData() {
+            var t = document.getElementById("tx-time").value;
+            var type = document.getElementById("tx-type").value;
+            var desc = document.getElementById("tx-desc").value;
 
-        function renderLogTable() {
-            var tbody = document.getElementById('log-tbody');
-            if(!tbody) return;
-            
-            tbody.innerHTML = ''; // ล้างตารางเดิมก่อนวาดใหม่
-
-            for (var i = 0; i < globalLogs.length; i++) {
-                var row = tbody.insertRow(-1); // เพิ่มแถวใหม่ต่อท้าย
-                
-                var cellTime = row.insertCell(0);
-                var cellType = row.insertCell(1);
-                var cellDesc = row.insertCell(2);
-                
-                cellTime.className = 'col-time';
-                cellType.className = 'col-type';
-                
-                cellTime.innerHTML = globalLogs[i].time;
-                cellType.innerHTML = globalLogs[i].type;
-                cellDesc.innerHTML = globalLogs[i].desc;
-            }
-        }
-
-        function saveLogData() {
-            var timeVal = document.getElementById('time').value;
-            var typeVal = document.getElementById('type').value;
-            var descVal = document.getElementById('desc').value;
-
-            if (timeVal === '' || descVal === '') {
-                alert('CRITICAL: PLEASE FILL IN ALL FIELDS.');
+            if(t == "" || desc == "") {
+                alert("ENTER ALL DETAILS FIRST!");
                 return;
             }
 
-            // สร้างก้อนข้อมูลใหม่
-            var newEntry = {
-                time: timeVal,
-                type: typeVal,
-                desc: descVal.toUpperCase()
-            };
+            // บันทึกข้อมูลลง Array
+            listData.push({
+                time: t,
+                type: type,
+                desc: desc.toUpperCase()
+            });
 
-            globalLogs.push(newEntry);
-
-            // จัดเรียงเวลาในตารางจากเช้าไปเย็นด้วยคำสั่งพื้นฐาน
-            globalLogs.sort(function(a, b) {
+            // เรียงลำดับเวลา (เช้าไปเย็น)
+            listData.sort(function(a, b) {
                 return a.time.localeCompare(b.time);
             });
 
-            // พยายามเซฟลงเครื่อง ถ้าติดโหมดส่วนตัวจะข้ามไป แต่ตารางบนหน้าจอยังอัปเดตให้เห็นชั่วคราว
+            // เซฟลงเครื่อง (ถ้าเปิด Privateโหมดจะเซฟไม่เข้า แต่หน้าจอจะยังแสดงผลให้)
             try {
-                var todayKey = 'ration_' + new Date().toDateString();
-                localStorage.setItem(todayKey, JSON.stringify(globalLogs));
+                localStorage.setItem("mil_log_data", JSON.stringify(listData));
             } catch(e) {}
 
-            // เคลียร์ช่องรายละเอียดหลังบันทึกเสร็จ
-            document.getElementById('desc').value = '';
-            
-            // สั่งอัปเดตตารางผลลัพธ์ทันที
-            renderLogTable();
+            // เคลียร์ช่องพิมพ์รายละเอียด
+            document.getElementById("tx-desc").value = "";
+
+            // สั่งอัปเดตตารางทันที
+            refreshTable();
+        }
+
+        function refreshTable() {
+            // ใช้วิธีต่อข้อความ (String Concatenation) แบบยุคเก่า เพื่อบังคับให้เบราว์เซอร์วาดใหม่ชัวร์ๆ
+            var html = "";
+            for(var i = 0; i < listData.length; i++) {
+                html += "<tr>";
+                html += "<td style='text-align:center; font-weight:bold;'>" + listData[i].time + "</td>";
+                html += "<td style='text-align:center; font-weight:bold;'>" + listData[i].type + "</td>";
+                html += "<td>" + listData[i].desc + "</td>";
+                html += "</tr>";
+            }
+            document.getElementById("log-table-body").innerHTML = html;
         }
     </script>
 </body>
