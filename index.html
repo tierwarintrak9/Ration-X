@@ -3,24 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LIGHTYEARX-MOTOREX V5.7A1</title>
-    <style> .flash-effect {
-    animation: flash-green 0.3s ease-out;
-}
-@keyframes flash-green {
-    0% { background-color: #00FF33; color: #000; }
-    100% { background-color: #000; color: #00FF33; }
-}
-.typing {
-    border-right: 2px solid #00FF33;
-    white-space: nowrap;
-    overflow: hidden;
-    animation: typing 3s steps(30, end), blink-caret .75s step-end infinite;
-    display: inline-block;
-}
-@keyframes typing { from { width: 0 } to { width: 100% } }
-@keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #00FF33 } }
-
+    <title>LIGHTYEARX-MOTOREX V5</title>
+    <style>
         /* TACTICAL HACKER & MILITARY TERMINAL HUD */
         body { 
             background-color: #000500; 
@@ -88,7 +72,8 @@
     }
     .status-left { float: left; width: 70%; font-weight: bold; }
     .status-right { float: right; width: 30%; text-align: right; color: #00FF33; font-weight: bold; animation: blink 1.5s infinite; }
-    
+    .status-middle { float: right; width: 30%; text-align: right; color: #00FF33; font-weight: bold; animation: blink 1.5s infinite; }
+        
     @keyframes blink { 0% { opacity: 1.0; } 50% { opacity: 0.3; } 100% { opacity: 1.0; } }
     
     .date { text-align: center; color: #00FF33; font-weight: bold; margin-bottom: 15px; font-size: 16px; }
@@ -170,13 +155,13 @@
 <body>
     <div class="box">
         <div class="status-bar">
-            <div class="status-left">SYS.LOG // LIGHTYEARX-MOTOREX_BIONIC 5.5B2</div>
+            <div class="status-left">SYS.LOG // LIGHTYEARX-MOTOREX_BIONIC 5.7A3</div>
             <div class="status-right">● ONLINE</div>
             <div class="status-middle">● [+66]THAILAND</div>
             <div style="clear:both;"></div>
         </div>
 
-    <h1 class="typing">TACTICAL-COMS_RATION.LOG</h1>>
+    <h1>TACTICAL-COMS_RATION.LOG</h1>
     <div id="date-text" class="date">LOADING INDEX...</div>
     
     <div class="field">
@@ -271,27 +256,11 @@
         document.getElementById("tx-time").value = newH + ":" + newM;
     }
     function addData() {
-    var t = document.getElementById("tx-time").value; 
-    var type = document.getElementById("tx-type").value; 
-    var desc = document.getElementById("tx-desc").value;
-    
-    if(t == "" || desc == "") { alert("CRITICAL ERROR: DATA INPUT INCOMPLETE!"); return; }
-    
-    listData.push({time: t, type: type, desc: desc.toUpperCase()});
-    listData.sort(function(a, b) { return a.time.localeCompare(b.time); });
-    
-    // --- เพิ่มลูกเล่นตรงนี้ ---
-    var table = document.querySelector("table");
-    table.classList.add("flash-effect");
-    setTimeout(() => { table.classList.remove("flash-effect"); }, 300);
-    // -----------------------
-    
-    saveToStorage(); 
-    document.getElementById("tx-desc").value = ""; 
-    resetTimeToCurrent(); 
-    refreshTable();
-}
-le();
+        var t = document.getElementById("tx-time").value; var type = document.getElementById("tx-type").value; var desc = document.getElementById("tx-desc").value;
+        if(t == "" || desc == "") { alert("CRITICAL ERROR: DATA INPUT INCOMPLETE!"); return; }
+        listData.push({time: t, type: type, desc: desc.toUpperCase()});
+        listData.sort(function(a, b) { return a.time.localeCompare(b.time); });
+        saveToStorage(); document.getElementById("tx-desc").value = ""; resetTimeToCurrent(); refreshTable();
     }
     function deleteData(index) { if(confirm("TERMINATE THIS LOG ENTRY FROM CORE DATA?")) { listData.splice(index, 1); saveToStorage(); refreshTable(); } }
     function setFilter(filterType) {
@@ -326,6 +295,3 @@ le();
         document.getElementById("log-table-body").innerHTML = html;
         document.getElementById("summary-text").innerHTML = "COUNTER // FOOD_UNIT: [" + foodCount + "] | DRINK_UNIT: [" + drinkCount + "]";
     }
-</script>
-</body>
-</html>
