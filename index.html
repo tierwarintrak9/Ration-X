@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TACTICAL LOG V3</title>
+    <title>LIGHTYEARX-MOTOREX V4</title>
     <style>
+        /* HACKER GREEN-BLACK THEME */
         body { 
-            background-color: #2F4F4F; 
-            color: #FFFFFF; 
+            background-color: #000000; 
+            color: #00FF00; 
             font-family: "Courier New", monospace; 
             text-transform: uppercase; 
             padding: 15px; 
@@ -16,32 +17,50 @@
         .box { 
             max-width: 500px; 
             margin: 0 auto; 
-            background-color: #1A2B1A; 
+            background-color: #050505; 
             padding: 15px; 
-            border: 3px solid #9D00FF; 
+            border: 2px solid #00FF00; 
             border-radius: 4px; 
+            box-shadow: 0 0 10px #005500;
         }
         h1, h2 { 
             text-align: center; 
-            color: #FFFFFF; 
+            color: #00FF00; 
             margin: 10px 0; 
-            border-bottom: 2px solid #9D00FF; 
+            border-bottom: 2px solid #00FF00; 
             padding-bottom: 5px; 
         }
+        
+        /* บังคับแยกฝั่งแถบสถานะแบบล็อกเปอร์เซ็นต์ ป้องกันบั๊กเบราว์เซอร์เก่า */
         .status-bar {
-            text-align: justify;
+            width: 100%;
             font-size: 11px;
-            color: #888888;
-            border-bottom: 1px dashed #9D00FF;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
+            color: #00AA00;
+            border-bottom: 1px dashed #00FF00;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
         }
+        .status-left {
+            float: left;
+            width: 70%;
+            text-align: left;
+            font-weight: bold;
+        }
+        .status-right {
+            float: right;
+            width: 30%;
+            text-align: right;
+            color: #00FF00;
+            font-weight: bold;
+        }
+        
         .date { 
             text-align: center; 
-            color: #9D00FF; 
+            color: #00FF00; 
             font-weight: bold; 
             margin-bottom: 15px; 
             font-size: 18px;
+            text-shadow: 0 0 5px #005500;
         }
         .field { 
             margin-bottom: 12px; 
@@ -50,6 +69,7 @@
             display: block; 
             margin-bottom: 4px; 
             font-weight: bold; 
+            color: #00AA00;
         }
         
         .time-row {
@@ -71,13 +91,14 @@
             width: 100%; 
             padding: 10px; 
             background-color: #000000; 
-            color: #FFFFFF; 
-            border: 1px solid #9D00FF; 
+            color: #00FF00; 
+            border: 1px solid #00FF00; 
             font-family: "Courier New", monospace; 
             font-size: 16px; 
             box-sizing: border-box; 
         }
         
+        /* ปุ่มคีย์ลัดสไตล์เทอร์มินอล */
         .preset-container {
             margin-top: 5px;
             margin-bottom: 10px;
@@ -85,9 +106,9 @@
         .btn-preset {
             display: inline-block;
             padding: 6px 10px;
-            background-color: #112211;
-            color: #9D00FF;
-            border: 1px solid #9D00FF;
+            background-color: #001100;
+            color: #00FF00;
+            border: 1px solid #00FF00;
             font-size: 12px;
             font-weight: bold;
             margin-right: 4px;
@@ -95,34 +116,36 @@
             cursor: pointer;
         }
         .btn-preset:active {
-            background-color: #9D00FF;
+            background-color: #00FF00;
             color: #000000;
         }
 
+        /* ปุ่มหลักแฮ็กเกอร์เขียวเข้ม */
         button.btn-main { 
             width: 100%; 
             padding: 14px; 
-            background-color: #4B5320; 
-            color: #FFFFFF; 
-            border: 3px solid #9D00FF; 
+            background-color: #003300; 
+            color: #00FF00; 
+            border: 2px solid #00FF00; 
             font-family: "Courier New", monospace; 
             font-size: 18px; 
             font-weight: bold; 
             margin-top: 5px; 
             text-transform: uppercase; 
+            cursor: pointer;
         }
         button.btn-main:active { 
-            background-color: #9D00FF; 
-            color: #FFFFFF;
+            background-color: #00FF00; 
+            color: #000000;
         }
         
         .summary-box {
-            background-color: #051505;
-            border: 1px solid #9D00FF;
+            background-color: #001100;
+            border: 1px solid #00FF00;
             padding: 8px;
             margin-top: 15px;
             font-size: 13px;
-            color: #9D00FF;
+            color: #00FF00;
             font-weight: bold;
             text-align: center;
         }
@@ -139,19 +162,23 @@
             margin-top: 5px; 
         }
         th, td { 
-            border: 1px solid #9D00FF; 
+            border: 1px solid #00FF00; 
             padding: 8px; 
             text-align: left; 
             font-size: 14px; 
         }
         th { 
-            background-color: #9D00FF; 
-            color: #FFFFFF; 
+            background-color: #00FF00; 
+            color: #000000; 
             text-align: center; 
+        }
+        td {
+            background-color: #000000;
+            color: #00FF00;
         }
         
         .btn-del {
-            background-color: #330000;
+            background-color: #220000;
             color: #FF3333;
             border: 1px solid #FF3333;
             font-family: "Courier New", monospace;
@@ -159,14 +186,18 @@
             padding: 2px 6px;
             cursor: pointer;
         }
+        .btn-del:active {
+            background-color: #FF3333;
+            color: #000000;
+        }
         
         .control-zone {
             margin-top: 20px;
-            border-top: 1px dashed #9D00FF;
+            border-top: 1px dashed #00FF00;
             padding-top: 15px;
         }
         .btn-danger {
-            background-color: #441111;
+            background-color: #330000;
             color: #FF3333;
             border: 1px solid #FF3333;
             padding: 10px;
@@ -180,7 +211,7 @@
         .btn-danger:active { background-color: #FF3333; color: #000000; }
         
         .btn-utility {
-            background-color: #112233;
+            background-color: #001122;
             color: #3399FF;
             border: 1px solid #3399FF;
             padding: 10px;
@@ -210,10 +241,9 @@
 </head>
 <body>
     <div class="box">
-        <!-- อัปเดตชื่อระบบตรงนี้แล้วครับ -->
         <div class="status-bar">
-            <span style="float:left;">LIGHTYEARX-MOTOREX</span>
-            <span style="float:right; color:#00FF00;">[STATUS: SECURE]</span>
+            <div class="status-left">LIGHTYEARX-MOTOREX_BIONIC 4.0</div>
+            <div class="status-right">[STATUS: SECURE]</div>
             <div style="clear:both;"></div>
         </div>
 
@@ -262,8 +292,8 @@
         </div>
 
         <div class="filter-container">
-            <span style="font-size:12px; font-weight:bold; margin-right:5px;">FILTER:</span>
-            <div class="btn-preset" id="f-all" onclick="setFilter('ALL')" style="color:#FFF; background:#9D00FF;">ALL</div>
+            <span style="font-size:12px; font-weight:bold; margin-right:5px; color:#00AA00;">FILTER:</span>
+            <div class="btn-preset" id="f-all" onclick="setFilter('ALL')" style="color:#000; background:#00FF00;">ALL</div>
             <div class="btn-preset" id="f-food" onclick="setFilter('FOOD')">FOOD</div>
             <div class="btn-preset" id="f-drink" onclick="setFilter('DRINK')">DRINK</div>
         </div>
@@ -279,8 +309,7 @@
                 </tr>
             </thead>
             <tbody id="log-table-body">
-                <!-- ข้อมูลแสดงตรงนี้ -->
-            </tbody>
+                </tbody>
         </table>
 
         <div class="control-zone">
@@ -304,7 +333,8 @@
             resetTimeToCurrent();
 
             try {
-                var cache = localStorage.getItem("mil_log_data_v3");
+                // เปลี่ยนคีย์จำข้อมูลเป็น v4 เพื่อให้เคลียร์แคชสีเก่าแบบหมดจด
+                var cache = localStorage.getItem("mil_log_data_v4");
                 if(cache) {
                     listData = JSON.parse(cache);
                     refreshTable();
@@ -384,14 +414,14 @@
         function setFilter(filterType) {
             currentFilter = filterType;
             
-            document.getElementById("f-all").style.background = (filterType === "ALL") ? "#9D00FF" : "#112211";
-            document.getElementById("f-all").style.color = (filterType === "ALL") ? "#FFF" : "#9D00FF";
+            document.getElementById("f-all").style.background = (filterType === "ALL") ? "#00FF00" : "#001100";
+            document.getElementById("f-all").style.color = (filterType === "ALL") ? "#000" : "#00FF00";
             
-            document.getElementById("f-food").style.background = (filterType === "FOOD") ? "#9D00FF" : "#112211";
-            document.getElementById("f-food").style.color = (filterType === "FOOD") ? "#FFF" : "#9D00FF";
+            document.getElementById("f-food").style.background = (filterType === "FOOD") ? "#00FF00" : "#001100";
+            document.getElementById("f-food").style.color = (filterType === "FOOD") ? "#000" : "#00FF00";
             
-            document.getElementById("f-drink").style.background = (filterType === "DRINK") ? "#9D00FF" : "#112211";
-            document.getElementById("f-drink").style.color = (filterType === "DRINK") ? "#FFF" : "#9D00FF";
+            document.getElementById("f-drink").style.background = (filterType === "DRINK") ? "#00FF00" : "#001100";
+            document.getElementById("f-drink").style.color = (filterType === "DRINK") ? "#000" : "#00FF00";
 
             refreshTable();
         }
@@ -421,7 +451,7 @@
 
         function saveToStorage() {
             try {
-                localStorage.setItem("mil_log_data_v3", JSON.stringify(listData));
+                localStorage.setItem("mil_log_data_v4", JSON.stringify(listData));
             } catch(e) {}
         }
 
